@@ -54,7 +54,7 @@ const signIn = ({ providers }) => {
         </div>
 
         <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300">
-          <h4>Don't have a account?</h4>
+          <h4>Dont have a account?</h4>
           <button className="text-blue-400">Sign in</button>
         </div>
         <div className="flex flex-col items-center justify-center">
