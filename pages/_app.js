@@ -4,7 +4,10 @@ import { RecoilRoot } from "recoil";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider
+      options={{ site: process.env.NEXTAUTH_URL }}
+      session={session}
+    >
       <RecoilRoot>
         <Component {...pageProps} />
       </RecoilRoot>

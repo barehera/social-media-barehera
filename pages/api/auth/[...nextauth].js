@@ -2,6 +2,8 @@ import nextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 export default nextAuth({
+  site: process.env.NEXTAUTH_URL,
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
