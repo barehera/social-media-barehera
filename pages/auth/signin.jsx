@@ -6,6 +6,9 @@ const signIn = ({ providers }) => {
   return (
     <>
       <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-20">
+        <h1>
+          This is not a REAL app, it is built for educational purposes only.
+        </h1>
         <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300">
           <img
             src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
