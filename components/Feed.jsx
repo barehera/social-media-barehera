@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MiniProfile from "./MiniProfile";
 import Posts from "./Posts";
 import Stories from "./Stories";
 import Suggestions from "./Suggestions";
 
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Feed = () => {
   const { data: session } = useSession();
+
   return (
     <>
       <main className=" grid grid-cols-1 md:grid-cols-2 md:max-w-3xl xl:grid-cols-3 xl:max-w-4xl mx-auto">
