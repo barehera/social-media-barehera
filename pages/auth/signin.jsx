@@ -1,10 +1,8 @@
 import React from "react";
 import { getProviders, signIn as SignIntoProvider } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
-import { useRouter } from "next/router";
 
 const signIn = ({ providers }) => {
-  const router = useRouter();
   return (
     <>
       <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-20 ">
