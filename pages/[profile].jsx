@@ -70,21 +70,21 @@ const Profile = () => {
         </div>
         {/*Icons */}
         <div className=" flex items-center px-6 justify-around md:justify-center py-3 border-b md:border-b-0 md:border-t border-gray-300 w-full text-gray-500 md:gap-x-4">
-          <div className=" md:flex md:items-center md:gap-x-1">
+          <div className=" md:flex md:items-center cursor-pointer md:gap-x-1">
             <IoMdGrid className="text-blue-400 " size={24}></IoMdGrid>
             <p className="hidden md:flex">Gönderiler</p>
           </div>
-          <div className=" md:flex md:items-center md:gap-x-2">
+          <div className=" md:flex md:items-center cursor-pointer md:gap-x-2">
             <AiOutlineFlag size={24}></AiOutlineFlag>
             <p className="hidden md:flex">Kaydedilenler</p>
           </div>
-          <div className=" md:flex md:items-center md:gap-x-2">
+          <div className=" md:flex md:items-center cursor-pointer md:gap-x-2">
             <HiOutlineUserGroup size={24}></HiOutlineUserGroup>
             <p className="hidden md:flex">Etiketlenenler</p>
           </div>
         </div>
         {/*Posts*/}
-        <div className="flex items-center justify-center h-40">
+        <div className="flex items-center justify-center h-40 mx-auto">
           <div className="w-full flex flex-col items-center justify-center px-6">
             <h4 className="font-semibold text-center mb-2">
               Hayatından kareleri çekip paylaşmaya başla.
@@ -94,10 +94,11 @@ const Profile = () => {
             </p>
           </div>
         </div>
-        <div>
+        <div className="flex items-center justify-center">
           <img
             src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
             alt="picture"
+            className="w-full h-auto object-contain"
           />
         </div>
       </div>

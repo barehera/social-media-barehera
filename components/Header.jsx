@@ -13,7 +13,15 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { modalState } from "../atoms/modalAtom";
-import { AiOutlineMessage } from "react-icons/ai";
+import {
+  AiOutlineMessage,
+  AiOutlinePlusCircle,
+  AiOutlineSearch,
+  AiOutlineHeart,
+} from "react-icons/ai";
+import { FiLogOut } from "react-icons/fi";
+import { GrHomeRounded } from "react-icons/gr";
+import { BsPeople } from "react-icons/bs";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -40,7 +48,7 @@ const Header = () => {
           <div className="relative block ">
             <span className="sr-only">Search</span>
             <div className="absolute inset-y-0 left-0 flex items-center pl-2">
-              <SearchIcon className="h-6 w-6 text-gray-500"></SearchIcon>
+              <AiOutlineSearch className="h-6 w-6 text-gray-500"></AiOutlineSearch>
             </div>
             <input
               className="w-80 placeholder:text-slate-500 block bg-gray-100  border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-black sm:text-sm "
@@ -51,10 +59,10 @@ const Header = () => {
         </div>
         {/*right*/}
         <div className="flex items-center justify-end space-x-4">
-          <HomeIcon
+          <GrHomeRounded
             onClick={() => router.push("/")}
             className="navButton"
-          ></HomeIcon>
+          ></GrHomeRounded>
 
           {session ? (
             <>
@@ -64,12 +72,13 @@ const Header = () => {
                   3
                 </div>
               </div>
-              <PlusCircleIcon
+              <AiOutlinePlusCircle
                 onClick={() => setOpen(true)}
                 className="navButton"
-              ></PlusCircleIcon>
-              <UserGroupIcon className="navButton"></UserGroupIcon>
-              <HeartIcon className="navButton"></HeartIcon>
+              ></AiOutlinePlusCircle>
+              <BsPeople className="navButton"></BsPeople>
+              <AiOutlineHeart className="navButton"></AiOutlineHeart>
+              <FiLogOut className="navButton" onClick={signOut}></FiLogOut>
 
               <img
                 onClick={() => router.push(`/${session.user.username}`)}

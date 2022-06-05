@@ -4,7 +4,7 @@
 
 @layer components {
   .navButton {
-    @apply !h-6 !w-6 inline-flex cursor-pointer hover:scale-125 transition-all ease-out;
+    @apply !h-6 !w-6 inline-flex cursor-pointer hover:scale-95 transition-all ease-out;
   }
   .postButton {
     @apply h-7 hover:scale-125 cursor-pointer transition-all duration-150 ease-out;

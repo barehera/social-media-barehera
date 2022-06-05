@@ -1,22 +1,22 @@
 import React from "react";
 import { getProviders, signIn as SignIntoProvider } from "next-auth/react";
-import { AiOutlineGooglePlus } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/router";
 
 const signIn = ({ providers }) => {
+  const router = useRouter();
   return (
     <>
-      <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-20">
-        <h1>
-          This is not a REAL app, it is built for educational purposes only.
-        </h1>
-        <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300">
+      <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-20 ">
+        {/*Main content card */}
+        <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300 max-w-sm">
           <img
             src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
             alt="logo"
-            className="my-6"
+            className="my-6 cursor-pointer"
+            onClick={() => router.push("/")}
           />
           <div className="flex flex-col gap-y-2 w-full px-6">
-            <h1>!!!!Only google signin works!!!!</h1>
             <input
               type="text"
               placeholder="E-mail"
@@ -45,7 +45,7 @@ const signIn = ({ providers }) => {
                   }
                   className="flex items-center gap-x-2"
                 >
-                  <AiOutlineGooglePlus size={26}></AiOutlineGooglePlus>
+                  <FcGoogle size={26}></FcGoogle>
                   <p className="text-sm">Sign in With {provider.name}</p>
                 </button>
               </div>
@@ -55,23 +55,24 @@ const signIn = ({ providers }) => {
             </p>
           </div>
         </div>
-
-        <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300">
+        {/*Dont have an account card */}
+        <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300 max-w-sm">
           <h4>Dont have a account?</h4>
           <button className="text-blue-400">Sign in</button>
         </div>
-        <div className="flex flex-col items-center justify-center">
-          <p className="text-sm">Download the app.</p>
+        {/*mobile download links */}
+        <div className="flex flex-col items-center justify-center max-w-sm">
+          <p className="text-sm mb-4">Download the app.</p>
           <div className="flex space-x-2">
             <img
               src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_turkish-tr.png/30b29fd697b2.png"
               alt="appstore download"
-              className="w-36 h-24 object-contain cursor-pointer"
+              className="w-36  object-contain cursor-pointer"
             />
             <img
               src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_turkish-tr.png/9d46177cf153.png"
               alt="googleplay download"
-              className="w-36 h-24 object-contain cursor-pointer"
+              className="w-36  object-contain cursor-pointer"
             />
           </div>
         </div>
