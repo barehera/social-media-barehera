@@ -12,7 +12,6 @@ const signIn = ({ providers }) => {
             src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
             alt="logo"
             className="my-6 cursor-pointer"
-            onClick={() => router.push("/")}
           />
           <div className="flex flex-col gap-y-2 w-full px-6">
             <input
