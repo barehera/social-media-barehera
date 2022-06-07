@@ -29,7 +29,7 @@ const Header = () => {
   const [open, setOpen] = useRecoilState(modalState);
 
   return (
-    <div className="shadow-sm border-b bg-white sticky top-0 z-10">
+    <div className="shadow-sm border-b bg-white sticky top-0 z-30">
       <div className="flex justify-between max-w-5xl mx-auto p-1 md:py-1 items-center">
         {/*Left*/}
         <div
