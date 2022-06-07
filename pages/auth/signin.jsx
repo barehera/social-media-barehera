@@ -60,7 +60,7 @@ const signIn = ({ providers }) => {
         {/*mobile download links */}
         <div className="flex flex-col items-center justify-center max-w-sm">
           <p className="text-sm mb-4">Download the app.</p>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 items-center justify-center">
             <img
               src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_turkish-tr.png/30b29fd697b2.png"
               alt="appstore download"
