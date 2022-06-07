@@ -133,7 +133,7 @@ const Profile = () => {
         {/*Posts*/}
 
         {posts ? (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-10 px-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-8 px-4">
             {posts.map((post) => (
               <div key={post.id}>
                 <img
