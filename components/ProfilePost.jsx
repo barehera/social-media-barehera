@@ -46,7 +46,7 @@ const ProfilePost = ({ post, id }) => {
     <div className="relative">
       <img
         src={post.data().image}
-        className="w-full h-96 md:h-80 md:w-80 object-cover"
+        className="w-96 h-96 md:h-80 md:w-80 object-cover"
       ></img>
       <div
         className="absolute top-0 w-full h-full bg-black bg-opacity-0 z-10 hover:bg-opacity-30 transition-all ease-out cursor-pointer"

@@ -22,9 +22,11 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import Moment from "react-moment";
+import { useRouter } from "next/router";
 
 const Post = ({ id, username, userImg, img, caption }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
@@ -96,9 +98,15 @@ const Post = ({ id, username, userImg, img, caption }) => {
         <img
           src={userImg}
           alt="user post picture"
-          className="w-12 h-12 object-cover rounded-full border p-1 mr-3"
+          className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
+          onClick={() => router.push(`${username}`)}
         />
-        <p className="flex-1 font-bold">{username}</p>
+        <p
+          className="flex-1 font-bold cursor-pointer"
+          onClick={() => router.push(`${username}`)}
+        >
+          {username}
+        </p>
 
         <DotsHorizontalIcon className="h-5"></DotsHorizontalIcon>
       </div>

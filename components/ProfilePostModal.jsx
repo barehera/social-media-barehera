@@ -137,7 +137,7 @@ const ProfilePostModal = ({ id }) => {
             {/*Right side */}
             <div className="w-full h-full lg:w-2/5 relative ">
               {/*user image and username */}
-              <div className="flex p-4 justify-between items-center border-b border-gray-300 lg:border-none">
+              <div className="flex p-4 justify-between items-center lg:border-none">
                 <div className="flex items-center space-x-4 ">
                   <img
                     src={post.profileImg}
@@ -151,9 +151,9 @@ const ProfilePostModal = ({ id }) => {
                 </p>
               </div>
               {/*Comments */}
-              <div className="py-5 border-y border-gray-300 h-80 hidden lg:flex">
+              <div className="py-5 border-y border-gray-300 lg:h-80">
                 {comments.length > 0 && (
-                  <div className="ml-10 max-h-72 overflow-y-scroll scrollbar-thumb-black scrollbar-thin  flex flex-col gap-y-4">
+                  <div className="ml-10 lg:max-h-72 overflow-y-scroll scrollbar-thumb-black scrollbar-thin  flex flex-col gap-y-4">
                     {comments.map((comment) => (
                       <div
                         key={comment.data().id}
@@ -167,7 +167,7 @@ const ProfilePostModal = ({ id }) => {
 
                         <div className="text-sm flex-1 flex items-baseline  space-x-2">
                           <h6>
-                            <b>{comment.data().username}</b>
+                            <b>{comment.data().username}</b>{" "}
                             {comment.data().comment}
                           </h6>
                         </div>
