@@ -167,7 +167,7 @@ const ProfilePostModal = ({ id }) => {
 
                         <div className="text-sm flex-1 flex items-baseline  space-x-2">
                           <h6>
-                            <b>{comment.data().username}</b>{" "}
+                            <b>{comment.data().username}</b>
                             {comment.data().comment}
                           </h6>
                         </div>
