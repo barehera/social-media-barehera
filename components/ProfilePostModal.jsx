@@ -124,8 +124,8 @@ const ProfilePostModal = ({ id }) => {
   return (
     <>
       {open && (
-        <div className="h-screen w-full z-50 fixed top-0 flex items-center justify-center bg-opacity-70 bg-black ">
-          <div className="bg-white rounded-lg w-5/6 h-5/6 flex flex-col lg:flex-row ">
+        <div className="h-screen w-full  z-50 fixed top-0 flex items-center justify-center bg-opacity-70 bg-black ">
+          <div className="bg-white rounded-lg overflow-y-scroll scrollbar-none w-5/6 h-5/6 flex flex-col lg:flex-row ">
             {/*Left side */}
             <div className="flex h-80 w-full lg:h-full lg:w-3/5 items-start justify-start bg-black">
               <img
@@ -218,7 +218,7 @@ const ProfilePostModal = ({ id }) => {
               </div>
 
               {/*input box */}
-              <div className="absolute w-full bottom-0">
+              <div>
                 {session && (
                   <form className="flex items-center p-4">
                     <TbMoodHappy className="postButton" size={24}></TbMoodHappy>
