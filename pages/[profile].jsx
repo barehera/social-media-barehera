@@ -133,11 +133,11 @@ const Profile = () => {
 
         {posts ? (
           <div>
-            <div className="grid grid-cols-3 gap-10">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-10 px-4">
               {posts.map((post) => (
                 <img
                   src={post.data().image}
-                  className="w-80 h-80 object-cover"
+                  className="w-full h-96 md:h-80 md:w-80 object-cover"
                 ></img>
               ))}
             </div>
