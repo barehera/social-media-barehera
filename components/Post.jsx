@@ -57,12 +57,14 @@ const Post = ({ id, username, userImg, img, caption }) => {
     return unsubscribe;
   }, [db, id]);
 
+  //If liked set heart red
   useEffect(() => {
     setHasLiked(
       likes.findIndex((like) => like.id === session?.user?.uid) !== -1
     );
   }, [likes]);
 
+  //Post liking function
   const likePost = async () => {
     if (hasLiked) {
       await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));

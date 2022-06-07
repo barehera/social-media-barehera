@@ -5,20 +5,32 @@ import { IoMdGrid } from "react-icons/io";
 import { AiOutlineFlag } from "react-icons/ai";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import Modal from "../components/Modal";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import ProfilePost from "../components/ProfilePost";
+import ProfilePostModal from "../components/ProfilePostModal";
+import { useRecoilState } from "recoil";
+import { profileUserPost } from "../atoms/profilePostModalAtom";
 
 const Profile = () => {
   //Router
   const router = useRouter();
   const { profile } = router.query;
   const { data: session } = useSession();
-
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userPost] = useRecoilState(profileUserPost);
+
   useEffect(() => {
     // getting user from firestore
     const getUser = async () => {
@@ -32,24 +44,33 @@ const Profile = () => {
         setLoading(false);
       });
     };
-    //getting user posts from firestore
-    const getUserPosts = async () => {
-      const q = query(
-        collection(db, "posts"),
-        where("username", "==", `${profile}`)
-      );
-      await getDocs(q).then((snapshot) => setPosts(snapshot.docs));
-    };
+
     setLoading(true);
     getUser();
+  }, [profile]);
+
+  useEffect(() => {
+    //getting user posts from firestore
+    // BUG!! -- Need to order by timestamp by desc...
+    const getUserPosts = async () => {
+      const unsubscribe = onSnapshot(
+        query(collection(db, "posts"), where("username", "==", `${profile}`)),
+        (snapshot) => {
+          setPosts(snapshot.docs);
+          setLoading(false);
+        }
+      );
+      return unsubscribe;
+    };
+
     setLoading(true);
     getUserPosts();
   }, [profile]);
 
   return (
-    <div>
+    <div className="relative">
       <Header></Header>
-      <div className="md:max-w-5xl mx-auto flex flex-col  ">
+      <div className="md:max-w-5xl mx-auto flex flex-col">
         {/*Profile image and info */}
         <div className="flex items-center gap-x-12 w-full p-4 ">
           {loading ? (
@@ -133,15 +154,22 @@ const Profile = () => {
         {/*Posts*/}
 
         {posts ? (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-8 px-4">
-            {posts.map((post) => (
-              <div key={post.id}>
-                <img
-                  src={post.data().image}
-                  className="w-full h-96 md:h-80 md:w-80 object-cover"
-                ></img>
+          <div>
+            {loading ? (
+              <div className="w-full h-48 flex items-center justify-center">
+                <FaSpinner size={40} className="animate-spin"></FaSpinner>
               </div>
-            ))}
+            ) : (
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
+                {posts.map((post) => (
+                  <ProfilePost
+                    key={post.id}
+                    id={post.id}
+                    post={post}
+                  ></ProfilePost>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div>
@@ -166,6 +194,7 @@ const Profile = () => {
         )}
       </div>
       <Modal></Modal>
+      {userPost && <ProfilePostModal></ProfilePostModal>}
     </div>
   );
 };
