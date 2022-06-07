@@ -45,6 +45,7 @@ const Profile = () => {
     setLoading(true);
     getUserPosts();
   }, [profile]);
+
   return (
     <div>
       <Header></Header>
@@ -132,15 +133,15 @@ const Profile = () => {
         {/*Posts*/}
 
         {posts ? (
-          <div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-10 px-4">
-              {posts.map((post) => (
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-5 lg:gap-10 justify-center items-center my-10 px-4">
+            {posts.map((post) => (
+              <div key={post.id}>
                 <img
                   src={post.data().image}
                   className="w-full h-96 md:h-80 md:w-80 object-cover"
                 ></img>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div>
