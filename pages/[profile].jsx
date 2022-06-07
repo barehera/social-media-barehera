@@ -102,15 +102,15 @@ const Profile = () => {
             {/*Post and follower number */}
             <div className="gap-x-6 hidden md:flex">
               <div className="flex gap-x-1 items-center">
-                <p className="font-semibold">0</p>
+                <p className="font-semibold">{posts.length}</p>
                 <p className="text-sm">Post</p>
               </div>
               <div className="flex gap-x-1 items-center">
-                <p className="font-semibold">120</p>
+                <p className="font-semibold">0</p>
                 <p className="text-sm">Follower</p>
               </div>
               <div className="flex gap-x-1 items-center">
-                <p className="font-semibold">180</p>
+                <p className="font-semibold">0</p>
                 <p className="text-sm">Follows</p>
               </div>
             </div>
@@ -124,15 +124,15 @@ const Profile = () => {
         {/*Post and follower number -- MOBILE */}
         <div className="md:hidden flex items-center px-6 justify-around  border-y border-gray-300 w-full py-4">
           <div className="flex flex-col items-center">
-            <p className="font-semibold text-sm">0</p>
+            <p className="font-semibold text-sm">{posts.length}</p>
             <p className="text-sm text-gray-500">Post</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="font-semibold text-sm">120</p>
+            <p className="font-semibold text-sm">0</p>
             <p className="text-sm text-gray-500">Follower</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="font-semibold text-sm">180</p>
+            <p className="font-semibold text-sm">0</p>
             <p className="text-sm text-gray-500">Follows</p>
           </div>
         </div>
