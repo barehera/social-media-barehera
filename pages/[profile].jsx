@@ -44,21 +44,45 @@ const Profile = () => {
   useEffect(() => {
     // getting user from firestore
     const getUser = async () => {
-      const q = query(
-        collection(db, "users"),
-        where("username", "==", `${profile}`)
-      );
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        let user = doc.data();
-        let userId = doc.id;
+      if (profile) {
+        const q = query(
+          collection(db, "users"),
+          where("username", "==", `${profile}`)
+        );
+        const querySnapshot = await getDocs(q);
+        // Setting User
+        let user = querySnapshot?.docs[0].data();
+        let userId = querySnapshot?.docs[0].id;
         setUser({ ...user, id: userId });
+        // Setting User Follows and Followers
+        //Follows
+        const unsubscribeFollows = onSnapshot(
+          query(
+            collection(db, "users", userId, "follows"),
+            where("username", "!=", null)
+          ),
+          (snapshot) => {
+            setUserFollows(snapshot.docs);
+          }
+        );
+        //Followers
+        const unsubscribeFollowers = onSnapshot(
+          query(
+            collection(db, "users", userId, "followers"),
+            where("username", "!=", null)
+          ),
+          (snapshot) => {
+            setUserFollowers(snapshot.docs);
+          }
+        );
         setLoading(false);
-      });
+        return unsubscribeFollowers, unsubscribeFollows;
+      }
     };
     setLoading(true);
     getUser();
   }, [profile]);
+  userFollows.map((userFollow) => console.log(userFollow.data()));
 
   useEffect(() => {
     //getting user posts from firestore
@@ -71,6 +95,7 @@ const Profile = () => {
           setLoading(false);
         }
       );
+
       return unsubscribe;
     };
     setLoading(true);
@@ -182,6 +207,7 @@ const Profile = () => {
                 </>
               )}
             </div>
+
             {/*Post and follower number */}
             <div className="gap-x-6 hidden md:flex">
               <div className="flex gap-x-1 items-center">
@@ -189,11 +215,11 @@ const Profile = () => {
                 <p className="text-sm">Post</p>
               </div>
               <div className="flex gap-x-1 items-center">
-                <p className="font-semibold">0</p>
+                <p className="font-semibold">{userFollowers.length}</p>
                 <p className="text-sm">Follower</p>
               </div>
               <div className="flex gap-x-1 items-center">
-                <p className="font-semibold">0</p>
+                <p className="font-semibold">{userFollows.length}</p>
                 <p className="text-sm">Follows</p>
               </div>
             </div>
@@ -211,11 +237,11 @@ const Profile = () => {
             <p className="text-sm text-gray-500">Post</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="font-semibold text-sm">0</p>
+            <p className="font-semibold text-sm">{userFollowers.length}</p>
             <p className="text-sm text-gray-500">Follower</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="font-semibold text-sm">0</p>
+            <p className="font-semibold text-sm">{userFollows.length}</p>
             <p className="text-sm text-gray-500">Follows</p>
           </div>
         </div>
