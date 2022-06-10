@@ -17,6 +17,14 @@ export default function Home() {
           username: session.user.username,
           profileImg: session.user.image,
         });
+        await setDoc(
+          doc(db, "users", `${session.user.uid}`, "follows", "empty"),
+          { empty: null }
+        );
+        await setDoc(
+          doc(db, "users", `${session.user.uid}`, "followers", "empty"),
+          { empty: null }
+        );
       }
     };
     addUserToDatabase();

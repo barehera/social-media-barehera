@@ -12,6 +12,9 @@ import {
   getDocs,
   onSnapshot,
   orderBy,
+  setDoc,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
@@ -24,12 +27,19 @@ import { profileUserPost } from "../atoms/profilePostModalAtom";
 const Profile = () => {
   //Router
   const router = useRouter();
-  const { profile } = router.query;
+  const profile = router.query.profile;
+  const userId = router.query.id;
   const { data: session } = useSession();
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userPost] = useRecoilState(profileUserPost);
+  const [hasFollowed, setHasFollowed] = useState(false);
+  const [follows, setFollows] = useState([]);
+  const [followers, setFollowers] = useState([]);
+
+  const [userFollows, setUserFollows] = useState([]);
+  const [userFollowers, setUserFollowers] = useState([]);
 
   useEffect(() => {
     // getting user from firestore
@@ -40,11 +50,12 @@ const Profile = () => {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        setUser(doc.data());
+        let user = doc.data();
+        let userId = doc.id;
+        setUser({ ...user, id: userId });
         setLoading(false);
       });
     };
-
     setLoading(true);
     getUser();
   }, [profile]);
@@ -62,10 +73,59 @@ const Profile = () => {
       );
       return unsubscribe;
     };
-
     setLoading(true);
     getUserPosts();
   }, [profile]);
+
+  //Getting Followed People -- session user
+  useEffect(() => {
+    if (session) {
+      const unsubscribe = onSnapshot(
+        collection(db, "users", session.user.uid, "follows"),
+        (snapshot) => {
+          setFollows(snapshot.docs);
+        }
+      );
+      return unsubscribe;
+    }
+  }, [db, session?.user?.uid]);
+
+  //Getting Followers -- session user
+  useEffect(() => {
+    if (session) {
+      const unsubscribe = onSnapshot(
+        collection(db, "users", session.user.uid, "followers"),
+        (snapshot) => {
+          setFollowers(snapshot.docs);
+        }
+      );
+      return unsubscribe;
+    }
+  }, [db, session?.user?.uid]);
+
+  //Follow Unfollow Function
+  const handleFollow = async () => {
+    if (hasFollowed) {
+      //Deleting followed user and follower session user
+      await deleteDoc(doc(db, "users", session.user.uid, "follows", user.id));
+      await deleteDoc(doc(db, "users", user.id, "followers", session.user.uid));
+    } else {
+      //Setting followed user and follower session user
+      await setDoc(doc(db, "users", session.user.uid, "follows", user.id), {
+        username: user.username,
+        profileImg: user.profileImg,
+      });
+      await setDoc(doc(db, "users", user.id, "followers", session.user.uid), {
+        username: session.user.username,
+        profileImg: session.user.image,
+      });
+    }
+  };
+
+  //HasFollowed ? function
+  useEffect(() => {
+    setHasFollowed(follows.findIndex((follow) => follow.id === user.id) !== -1);
+  }, [follows]);
 
   return (
     <div className="relative">
@@ -97,6 +157,29 @@ const Profile = () => {
                 <button className="text-sm border rounded-sm border-gray-300 py-1 px-4 font-semibold md:w-36 ">
                   Edit Profile
                 </button>
+              )}
+              {session && (
+                <>
+                  {session?.user?.username !== profile && (
+                    <div>
+                      {!hasFollowed ? (
+                        <button
+                          onClick={handleFollow}
+                          className="bg-blue-500 text-white py-1 px-4 text-sm rounded-sm hover:bg-opacity-90 transition-all"
+                        >
+                          Follow
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleFollow}
+                          className="bg-blue-500 text-white py-1 px-4 text-sm rounded-sm hover:bg-opacity-90 transition-all"
+                        >
+                          Unfollow
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
             {/*Post and follower number */}
