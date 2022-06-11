@@ -244,7 +244,7 @@ const Profile = () => {
                             ))}
                           </>
                         ) : (
-                          <p className="text-sm font-semibold">No Follows</p>
+                          <p className="text-sm font-semibold">No Followers</p>
                         )}
                       </div>
                     </div>
@@ -324,7 +324,7 @@ const Profile = () => {
                         ))}
                       </>
                     ) : (
-                      <p className="text-sm font-semibold">No Follows</p>
+                      <p className="text-sm font-semibold">No Followers</p>
                     )}
                   </div>
                 </div>
