@@ -229,10 +229,7 @@ const Profile = () => {
                           <>
                             {userFollowers.map((follower) => (
                               <div
-                                className="flex space-x-2 w-full cursor-pointer hover:scale-105 transition-all ease-out"
-                                onClick={() =>
-                                  router.push(`${follower.data().username}`)
-                                }
+                                className="flex space-x-2 w-full"
                                 key={follower.id}
                               >
                                 <img
@@ -261,10 +258,7 @@ const Profile = () => {
                           <>
                             {userFollows.map((follow) => (
                               <div
-                                className="flex space-x-2 w-full cursor-pointer hover:scale-105 transition-all ease-out"
-                                onClick={() =>
-                                  router.push(`${follow.data().username}`)
-                                }
+                                className="flex space-x-2 w-full"
                                 key={follow.id}
                               >
                                 <img
@@ -315,10 +309,7 @@ const Profile = () => {
                       <>
                         {userFollowers.map((follower) => (
                           <div
-                            className="flex space-x-2 w-full cursor-pointer hover:scale-105 transition-all ease-out"
-                            onClick={() =>
-                              router.push(`${follower.data().username}`)
-                            }
+                            className="flex space-x-2 w-full"
                             key={follower.id}
                           >
                             <img
@@ -345,10 +336,7 @@ const Profile = () => {
                       <>
                         {userFollows.map((follow) => (
                           <div
-                            className="flex space-x-2 w-full cursor-pointer hover:scale-105 transition-all ease-out"
-                            onClick={() =>
-                              router.push(`${follow.data().username}`)
-                            }
+                            className="flex space-x-2 w-full"
                             key={follow.id}
                           >
                             <img
