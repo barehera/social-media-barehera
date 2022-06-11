@@ -233,6 +233,7 @@ const Profile = () => {
                                 onClick={() =>
                                   router.push(`${follower.data().username}`)
                                 }
+                                key={follower.id}
                               >
                                 <img
                                   src={follower.data().profileImg}
@@ -264,6 +265,7 @@ const Profile = () => {
                                 onClick={() =>
                                   router.push(`${follow.data().username}`)
                                 }
+                                key={follow.id}
                               >
                                 <img
                                   src={follow.data().profileImg}
@@ -317,6 +319,7 @@ const Profile = () => {
                             onClick={() =>
                               router.push(`${follower.data().username}`)
                             }
+                            key={follower.id}
                           >
                             <img
                               src={follower.data().profileImg}
@@ -346,6 +349,7 @@ const Profile = () => {
                             onClick={() =>
                               router.push(`${follow.data().username}`)
                             }
+                            key={follow.id}
                           >
                             <img
                               src={follow.data().profileImg}
