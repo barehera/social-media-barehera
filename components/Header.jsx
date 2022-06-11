@@ -76,8 +76,6 @@ const Header = () => {
                 onClick={() => setOpen(true)}
                 className="navButton"
               ></AiOutlinePlusCircle>
-              <BsPeople className="navButton"></BsPeople>
-              <AiOutlineHeart className="navButton"></AiOutlineHeart>
               <FiLogOut className="navButton" onClick={signOut}></FiLogOut>
 
               <img

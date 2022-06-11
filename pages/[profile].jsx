@@ -82,7 +82,6 @@ const Profile = () => {
     setLoading(true);
     getUser();
   }, [profile]);
-  userFollows.map((userFollow) => console.log(userFollow.data()));
 
   useEffect(() => {
     //getting user posts from firestore
