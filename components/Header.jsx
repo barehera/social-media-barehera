@@ -17,7 +17,8 @@ import {
   AiOutlineMessage,
   AiOutlinePlusCircle,
   AiOutlineSearch,
-  AiOutlineHeart,
+  AiOutlineLogout,
+  AiOutlineHome,
 } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 import { GrHomeRounded } from "react-icons/gr";
@@ -59,10 +60,11 @@ const Header = () => {
         </div>
         {/*right*/}
         <div className="flex items-center justify-end space-x-4">
-          <GrHomeRounded
+          <AiOutlineSearch className="navButton md:hidden"></AiOutlineSearch>
+          <AiOutlineHome
             onClick={() => router.push("/")}
             className="navButton"
-          ></GrHomeRounded>
+          ></AiOutlineHome>
 
           {session ? (
             <>
@@ -76,7 +78,10 @@ const Header = () => {
                 onClick={() => setOpen(true)}
                 className="navButton"
               ></AiOutlinePlusCircle>
-              <FiLogOut className="navButton" onClick={signOut}></FiLogOut>
+              <AiOutlineLogout
+                className="navButton"
+                onClick={signOut}
+              ></AiOutlineLogout>
 
               <img
                 onClick={() => router.push(`/${session.user.username}`)}
