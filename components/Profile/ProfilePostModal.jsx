@@ -25,7 +25,7 @@ import {
 } from "../../atoms/profilePostModalAtom";
 import { db } from "../../firebase";
 
-const ProfilePostModal = ({ id }) => {
+const ProfilePostModal = () => {
   const router = useRouter();
 
   const [open, setOpen] = useRecoilState(profilePostModalAtom);
@@ -38,7 +38,6 @@ const ProfilePostModal = ({ id }) => {
   const { data: session } = useSession();
 
   //getting user posts from firestore
-  // BUG!! -- Need to order by timestamp by desc...
   useEffect(() => {
     if (userPost.id) {
       const getUserPosts = async () => {
@@ -88,6 +87,7 @@ const ProfilePostModal = ({ id }) => {
       likes.findIndex((like) => like.id === session?.user?.uid) !== -1
     );
   }, [likes]);
+
   const sendComment = async (e) => {
     {
       e.preventDefault();
@@ -152,7 +152,7 @@ const ProfilePostModal = ({ id }) => {
               </div>
               {/*Comments */}
               <div className="py-5 border-y border-gray-300 lg:h-80">
-                {comments.length > 0 && (
+                {comments.length > 0 ? (
                   <div className="ml-10 lg:max-h-72 overflow-y-scroll scrollbar-thumb-black scrollbar-thin  flex flex-col gap-y-4">
                     {comments.map((comment) => (
                       <div
@@ -181,6 +181,10 @@ const ProfilePostModal = ({ id }) => {
                         </Moment>
                       </div>
                     ))}
+                  </div>
+                ) : (
+                  <div className="w-full text-sm font-normal flex items-start justify-start px-5">
+                    Yorum yapan ilk kisi olun...
                   </div>
                 )}
               </div>
