@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FaComment } from "react-icons/fa";
 import { AiFillHeart } from "react-icons/ai";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import { useRecoilState } from "recoil";
 import {
   profilePostModalAtom,
   profileUserPost,
-} from "../atoms/profilePostModalAtom";
-import ProfilePostModal from "./ProfilePostModal";
+} from "../../atoms/profilePostModalAtom";
 
 const ProfilePost = ({ post, id }) => {
   const [likes, setLikes] = useState([]);

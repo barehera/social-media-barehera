@@ -22,8 +22,8 @@ import { useRecoilState } from "recoil";
 import {
   profilePostModalAtom,
   profileUserPost,
-} from "../atoms/profilePostModalAtom";
-import { db } from "../firebase";
+} from "../../atoms/profilePostModalAtom";
+import { db } from "../../firebase";
 
 const ProfilePostModal = ({ id }) => {
   const router = useRouter();

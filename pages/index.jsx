@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Header from "../components/Header";
-import Feed from "../components/Feed";
-import Modal from "../components/Modal";
+import Feed from "../components/Feed/Feed";
+import Modal from "../components/NewPostModal/Modal";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { setDoc, doc } from "firebase/firestore";

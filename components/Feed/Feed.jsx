@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import MiniProfile from "./MiniProfile";
-import Posts from "./Posts";
-import Stories from "./Stories";
-import Suggestions from "./Suggestions";
+import MiniProfile from "./SideBar/MiniProfile";
+import Posts from "./Posts/Posts";
+import Stories from "../Feed/Stories/Stories";
+import Suggestions from "./SideBar/Suggestions";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";

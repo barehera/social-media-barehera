@@ -1,9 +1,9 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
-import { modalState } from "../atoms/modalAtom";
+import { modalState } from "../../atoms/modalAtom";
 import { Dialog, Transition } from "@headlessui/react";
 import { CameraIcon } from "@heroicons/react/outline";
-import { db, storage } from "../firebase";
+import { db, storage } from "../../firebase";
 import {
   addDoc,
   collection,

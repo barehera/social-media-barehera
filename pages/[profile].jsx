@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { IoMdGrid } from "react-icons/io";
 import { AiOutlineFlag } from "react-icons/ai";
 import { HiOutlineUserGroup } from "react-icons/hi";
-import Modal from "../components/Modal";
+import Modal from "../components/NewPostModal/Modal";
 import {
   collection,
   query,
@@ -19,8 +19,8 @@ import {
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import ProfilePost from "../components/ProfilePost";
-import ProfilePostModal from "../components/ProfilePostModal";
+import ProfilePost from "../components/Profile/ProfilePost";
+import ProfilePostModal from "../components/Profile/ProfilePostModal";
 import { useRecoilState } from "recoil";
 import { profileUserPost } from "../atoms/profilePostModalAtom";
 
@@ -88,7 +88,11 @@ const Profile = () => {
     // BUG!! -- Need to order by timestamp by desc...
     const getUserPosts = async () => {
       const unsubscribe = onSnapshot(
-        query(collection(db, "posts"), where("username", "==", `${profile}`)),
+        query(
+          collection(db, "posts"),
+          where("username", "==", `${profile}`),
+          orderBy("timestamp", "desc")
+        ),
         (snapshot) => {
           setPosts(snapshot.docs);
           setLoading(false);

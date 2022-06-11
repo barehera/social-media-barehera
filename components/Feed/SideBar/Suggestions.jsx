@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import {
   collection,
-  deleteDoc,
   doc,
   getDocs,
   onSnapshot,
@@ -11,7 +9,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../../../firebase";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -20,7 +18,6 @@ const Suggestions = () => {
   const [filteredUser, setFilteredUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionUserFollowsId, setSessionUserFollowsId] = useState([]);
-  const [hasFollowed, setHasFollowed] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
   useEffect(() => {

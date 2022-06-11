@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Story from "./Story";
+import Story from "./Story/Story";
 import { useSession } from "next-auth/react";
-import StoryLoader from "./StoryLoader";
+import StoryLoader from "./Story/StoryLoader";
 
 const Stories = () => {
   const [users, setUsers] = useState([]);

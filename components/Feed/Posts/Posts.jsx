@@ -1,7 +1,7 @@
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
-import { db } from "../firebase";
-import Post from "./Post";
+import { db } from "../../../firebase";
+import Post from "../Posts/Post/Post";
 import { FaSpinner } from "react-icons/fa";
 
 const Posts = () => {
