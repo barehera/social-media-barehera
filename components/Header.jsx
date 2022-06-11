@@ -1,14 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
-import {
-  HeartIcon,
-  MenuIcon,
-  PaperAirplaneIcon,
-  PlusCircleIcon,
-  SearchIcon,
-  UserGroupIcon,
-} from "@heroicons/react/outline";
-import { HomeIcon } from "@heroicons/react/solid";
+import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
@@ -20,9 +11,6 @@ import {
   AiOutlineLogout,
   AiOutlineHome,
 } from "react-icons/ai";
-import { FiLogOut } from "react-icons/fi";
-import { GrHomeRounded } from "react-icons/gr";
-import { BsPeople } from "react-icons/bs";
 
 const Header = () => {
   const { data: session } = useSession();
