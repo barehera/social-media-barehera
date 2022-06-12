@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaComment } from "react-icons/fa";
 import { AiFillHeart } from "react-icons/ai";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRecoilState } from "recoil";
 import {
@@ -9,7 +15,7 @@ import {
   profileUserPost,
 } from "../../atoms/profilePostModalAtom";
 
-const ProfilePost = ({ post, id }) => {
+const ProfilePost = ({ post, userId, postId }) => {
   const [likes, setLikes] = useState([]);
   const [comments, setComments] = useState([]);
   const [open, setOpen] = useRecoilState(profilePostModalAtom);
@@ -19,7 +25,7 @@ const ProfilePost = ({ post, id }) => {
   useEffect(() => {
     const unsubscribe = onSnapshot(
       query(
-        collection(db, "posts", id, "comments"),
+        collection(db, "users", userId, "posts", postId, "comments"),
         orderBy("timestamp", "desc")
       ),
       (snapshot) => {
@@ -28,18 +34,18 @@ const ProfilePost = ({ post, id }) => {
     );
 
     return unsubscribe;
-  }, [db, id]);
+  }, [db, userId, postId]);
 
   //Likes
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "posts", id, "likes"),
+      collection(db, "users", userId, "posts", postId, "likes"),
       (snapshot) => {
         setLikes(snapshot.docs);
       }
     );
     return unsubscribe;
-  }, [db, id]);
+  }, [db, userId, postId]);
 
   return (
     <div className="relative">
@@ -51,7 +57,7 @@ const ProfilePost = ({ post, id }) => {
         className="absolute top-0 w-full h-full bg-black bg-opacity-0 z-10 hover:bg-opacity-30 transition-all ease-out cursor-pointer"
         onClick={() => {
           setOpen(true);
-          setUserPost({ id });
+          setUserPost({ postId: postId, userId: post.data().userId });
         }}
       >
         <div className="flex items-center justify-center h-full w-full space-x-10 opacity-0 hover:opacity-100">

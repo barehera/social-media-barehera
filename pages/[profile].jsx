@@ -28,7 +28,6 @@ const Profile = () => {
   //Router
   const router = useRouter();
   const profile = router.query.profile;
-  const userId = router.query.id;
   const { data: session } = useSession();
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
@@ -76,35 +75,45 @@ const Profile = () => {
             setUserFollowers(snapshot.docs);
           }
         );
+        //If Followed Get Posts from firestore
+        if (hasFollowed) {
+          const unsubscribePosts = onSnapshot(
+            query(
+              collection(db, "users", userId, "posts"),
+              orderBy("timestamp", "desc")
+            ),
+            (snapshot) => {
+              setPosts(snapshot.docs);
+              setLoading(false);
+            }
+          );
+          return unsubscribePosts;
+        } else {
+          setPosts([]);
+        }
+
+        //Getting self profile posts
+        if (session?.user?.uid === userId) {
+          const unsubscribeSelfPosts = onSnapshot(
+            query(
+              collection(db, "users", userId, "posts"),
+              orderBy("timestamp", "desc")
+            ),
+            (snapshot) => {
+              setPosts(snapshot.docs);
+              setLoading(false);
+            }
+          );
+          return unsubscribeSelfPosts;
+        }
+
         setLoading(false);
         return unsubscribeFollowers, unsubscribeFollows;
       }
     };
     setLoading(true);
     getUser();
-  }, [profile]);
-
-  useEffect(() => {
-    //getting user posts from firestore
-    // BUG!! -- Need to order by timestamp by desc...
-    const getUserPosts = async () => {
-      const unsubscribe = onSnapshot(
-        query(
-          collection(db, "posts"),
-          where("username", "==", `${profile}`),
-          orderBy("timestamp", "desc")
-        ),
-        (snapshot) => {
-          setPosts(snapshot.docs);
-          setLoading(false);
-        }
-      );
-
-      return unsubscribe;
-    };
-    setLoading(true);
-    getUserPosts();
-  }, [profile]);
+  }, [profile, hasFollowed, session?.user?.uid]);
 
   //Getting Followed People -- session user
   useEffect(() => {
@@ -379,7 +388,8 @@ const Profile = () => {
                   {posts.map((post) => (
                     <ProfilePost
                       key={post.id}
-                      id={post.id}
+                      userId={post.data().userId}
+                      postId={post.id}
                       post={post}
                     ></ProfilePost>
                   ))}
@@ -387,24 +397,24 @@ const Profile = () => {
               </div>
             ) : (
               <div>
-                <div className="flex items-center justify-center h-40 mx-auto">
-                  <div className="w-full flex flex-col items-center justify-center px-6">
-                    <h4 className="font-semibold text-center mb-2">
-                      Hayatından kareleri çekip paylaşmaya başla.
-                    </h4>
-                    <p className="text-sm text-center ">
-                      ilk fotoğrafını veya videonu paylaşmak için uygulamayı
-                      yükle.
-                    </p>
+                {hasFollowed ? (
+                  <div>
+                    <div className="flex items-center justify-center h-40 mx-auto">
+                      <div className="w-full flex flex-col items-center justify-center px-6">
+                        <h4 className="text-center mb-2 text-gray-500">
+                          <b className="px-1 text-black">{user.username}</b> has
+                          no posts at the moment...
+                        </h4>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <img
-                    src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
-                    alt="picture"
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
+                ) : (
+                  <div className="w-full h-40 flex items-center justify-center text-gray-500">
+                    You have to follow
+                    <b className="px-1 text-black">{user.username}</b>to see
+                    posts...
+                  </div>
+                )}
               </div>
             )}
           </div>

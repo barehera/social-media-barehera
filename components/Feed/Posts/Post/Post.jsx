@@ -24,7 +24,7 @@ import { db } from "../../../../firebase";
 import Moment from "react-moment";
 import { useRouter } from "next/router";
 
-const Post = ({ id, username, userImg, img, caption }) => {
+const Post = ({ userId, postId, username, userImg, img, caption }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [comment, setComment] = useState("");
@@ -36,7 +36,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
   useEffect(() => {
     const unsubscribe = onSnapshot(
       query(
-        collection(db, "posts", id, "comments"),
+        collection(db, "users", userId, "posts", postId, "comments"),
         orderBy("timestamp", "desc")
       ),
       (snapshot) => {
@@ -45,19 +45,19 @@ const Post = ({ id, username, userImg, img, caption }) => {
     );
 
     return unsubscribe;
-  }, [db, id]);
+  }, [db, userId, postId]);
 
   //Likes
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "posts", id, "likes"),
+      collection(db, "users", userId, "posts", postId, "likes"),
       (snapshot) => {
         setLikes(snapshot.docs);
       }
     );
 
     return unsubscribe;
-  }, [db, id]);
+  }, [db, userId, postId]);
 
   //If liked set heart red
   useEffect(() => {
@@ -69,11 +69,16 @@ const Post = ({ id, username, userImg, img, caption }) => {
   //Post liking function
   const likePost = async () => {
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+      await deleteDoc(
+        doc(db, "users", userId, "posts", postId, "likes", session.user.uid)
+      );
     } else {
-      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
-        username: session.user.username,
-      });
+      await setDoc(
+        doc(db, "users", userId, "posts", postId, "likes", session.user.uid),
+        {
+          username: session.user.username,
+        }
+      );
     }
   };
 
@@ -83,7 +88,7 @@ const Post = ({ id, username, userImg, img, caption }) => {
     const commentToSend = comment;
     setComment("");
 
-    await addDoc(collection(db, "posts", id, "comments"), {
+    await addDoc(collection(db, "users", userId, "posts", postId, "comments"), {
       comment: commentToSend,
       username: session.user.username,
       userImage: session.user.image,
@@ -113,25 +118,28 @@ const Post = ({ id, username, userImg, img, caption }) => {
       {/*İmage */}
       <img src={img} alt="Post image" className="object-cover w-full" />
       {/*Buttons */}
-      <div className="flex justify-between py-4 pr-2">
-        <div className="flex items-center space-x-4 px-4">
-          {hasLiked ? (
-            <HeartIconFilled
-              onClick={likePost}
-              className="postButton text-red-500"
-            ></HeartIconFilled>
-          ) : (
-            <HeartIcon onClick={likePost} className="postButton "></HeartIcon>
-          )}
+      {session && (
+        <div className="flex justify-between py-4 pr-2">
+          <div className="flex items-center space-x-4 px-4">
+            {hasLiked ? (
+              <HeartIconFilled
+                onClick={likePost}
+                className="postButton text-red-500"
+              ></HeartIconFilled>
+            ) : (
+              <HeartIcon onClick={likePost} className="postButton "></HeartIcon>
+            )}
 
-          <ChatIcon className="postButton"></ChatIcon>
-          <PaperAirplaneIcon className="postButton rotate-45"></PaperAirplaneIcon>
+            <ChatIcon className="postButton"></ChatIcon>
+            <PaperAirplaneIcon className="postButton rotate-45"></PaperAirplaneIcon>
+          </div>
+          <BookmarkIcon className="postButton"></BookmarkIcon>
         </div>
-        <BookmarkIcon className="postButton"></BookmarkIcon>
-      </div>
+      )}
+
       {/*Liked */}
-      <div className="flex space-x-1">
-        <div className="pl-4 flex space-x-1 items-center">
+      <div className={`flex space-x-1 ${!session && "mt-4"}`}>
+        <div className="pl-5 flex space-x-1 items-center">
           <p className="font-bold text-sm">{likes.length}</p>
           <p className="text-sm ">{likes.length === 1 ? "Like" : "Likes"}</p>
         </div>

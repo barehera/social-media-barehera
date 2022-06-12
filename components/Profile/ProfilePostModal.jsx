@@ -39,9 +39,15 @@ const ProfilePostModal = () => {
 
   //getting user posts from firestore
   useEffect(() => {
-    if (userPost.id) {
+    if (userPost.postId) {
       const getUserPosts = async () => {
-        const docRef = doc(db, "posts", userPost.id);
+        const docRef = doc(
+          db,
+          "users",
+          userPost.userId,
+          "posts",
+          userPost.postId
+        );
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -52,13 +58,21 @@ const ProfilePostModal = () => {
 
       getUserPosts();
     }
-  }, [userPost.id]);
+  }, [userPost.postId]);
+
   //Comments
   useEffect(() => {
-    if (userPost.id) {
+    if (userPost.postId) {
       const unsubscribe = onSnapshot(
         query(
-          collection(db, "posts", userPost.id, "comments"),
+          collection(
+            db,
+            "users",
+            userPost.userId,
+            "posts",
+            userPost.postId,
+            "comments"
+          ),
           orderBy("timestamp", "desc")
         ),
         (snapshot) => {
@@ -67,20 +81,27 @@ const ProfilePostModal = () => {
       );
       return unsubscribe;
     }
-  }, [db, userPost.id]);
+  }, [db, userPost.postId]);
 
   //Likes
   useEffect(() => {
-    if (userPost.id) {
+    if (userPost.postId) {
       const unsubscribe = onSnapshot(
-        collection(db, "posts", userPost.id, "likes"),
+        collection(
+          db,
+          "users",
+          userPost.userId,
+          "posts",
+          userPost.postId,
+          "likes"
+        ),
         (snapshot) => {
           setLikes(snapshot.docs);
         }
       );
       return unsubscribe;
     }
-  }, [db, userPost.id]);
+  }, [db, userPost.postId]);
 
   useEffect(() => {
     setHasLiked(
@@ -94,12 +115,22 @@ const ProfilePostModal = () => {
       const commentToSend = comment;
       setComment("");
 
-      await addDoc(collection(db, "posts", userPost.id, "comments"), {
-        comment: commentToSend,
-        username: session.user.username,
-        userImage: session.user.image,
-        timestamp: serverTimestamp(),
-      });
+      await addDoc(
+        collection(
+          db,
+          "users",
+          userPost.userId,
+          "posts",
+          userPost.postId,
+          "comments"
+        ),
+        {
+          comment: commentToSend,
+          username: session.user.username,
+          userImage: session.user.image,
+          timestamp: serverTimestamp(),
+        }
+      );
     }
   };
 
@@ -108,12 +139,31 @@ const ProfilePostModal = () => {
     if (session) {
       if (hasLiked) {
         await deleteDoc(
-          doc(db, "posts", userPost.id, "likes", session.user.uid)
+          doc(
+            db,
+            "users",
+            userPost.userId,
+            "posts",
+            userPost.postId,
+            "likes",
+            session.user.uid
+          )
         );
       } else {
-        await setDoc(doc(db, "posts", userPost.id, "likes", session.user.uid), {
-          username: session?.user.username,
-        });
+        await setDoc(
+          doc(
+            db,
+            "users",
+            userPost.userId,
+            "posts",
+            userPost.postId,
+            "likes",
+            session.user.uid
+          ),
+          {
+            username: session?.user.username,
+          }
+        );
       }
     } else {
       alert("Giriş Yapınız!");
@@ -156,7 +206,7 @@ const ProfilePostModal = () => {
                   <div className="ml-10 lg:max-h-72 overflow-y-scroll scrollbar-thumb-black scrollbar-thin  flex flex-col gap-y-4">
                     {comments.map((comment) => (
                       <div
-                        key={comment.data().id}
+                        key={comment.id}
                         className="flex items-start space-x-2 mb-3"
                       >
                         <img

@@ -32,22 +32,32 @@ const Modal = () => {
     // 3-) Upload the image to firebase storage with the post ID
     // 4-) get a download URL from fb storage and update the original post with image
 
-    const docRef = await addDoc(collection(db, "posts"), {
-      username: session.user.username,
-      caption: captionRef.current.value,
-      profileImg: session.user.image,
-      timestamp: serverTimestamp(),
-    });
+    const docRef = await addDoc(
+      collection(db, "users", session.user.uid, "posts"),
+      {
+        username: session.user.username,
+        caption: captionRef.current.value,
+        profileImg: session.user.image,
+        timestamp: serverTimestamp(),
+        userId: session.user.uid,
+      }
+    );
 
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
+    const imageRef = ref(
+      storage,
+      `${session.user.username}/posts/${docRef.id}/image`
+    );
 
     await uploadString(imageRef, selectedFile, "data_url").then(
       async (snapshot) => {
         const downloadURL = await getDownloadURL(imageRef);
 
-        await updateDoc(doc(db, "posts", docRef.id), {
-          image: downloadURL,
-        });
+        await updateDoc(
+          doc(db, "users", session.user.uid, "posts", docRef.id),
+          {
+            image: downloadURL,
+          }
+        );
       }
     );
 

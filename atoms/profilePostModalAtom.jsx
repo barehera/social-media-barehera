@@ -7,5 +7,5 @@ export const profilePostModalAtom = atom({
 
 export const profileUserPost = atom({
   key: "profileUserPost",
-  default: { id: null },
+  default: { postId: null, userId: null },
 });
