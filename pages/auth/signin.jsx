@@ -5,9 +5,9 @@ import { FcGoogle } from "react-icons/fc";
 const signIn = ({ providers }) => {
   return (
     <>
-      <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-20 ">
+      <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-4 ">
         {/*Main content card */}
-        <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300 max-w-sm">
+        <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300 max-w-md">
           <img
             src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
             alt="logo"
@@ -53,12 +53,12 @@ const signIn = ({ providers }) => {
           </div>
         </div>
         {/*Dont have an account card */}
-        <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300 max-w-sm">
+        <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300 max-w-md">
           <h4>Dont have a account?</h4>
           <button className="text-blue-400">Sign in</button>
         </div>
         {/*mobile download links */}
-        <div className="flex flex-col items-center justify-center max-w-sm">
+        <div className="flex flex-col items-center justify-center max-w-md">
           <p className="text-sm mb-4">Download the app.</p>
           <div className="flex space-x-2 items-center justify-center">
             <img
