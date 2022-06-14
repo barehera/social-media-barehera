@@ -152,7 +152,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
             </p>
           </div>
         </div>
-        <div>{time.seconds}</div>
+
         <div className="pr-3 text-sm text-black font-light">{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`}</div>
       </div>
       {/*Caption */}
