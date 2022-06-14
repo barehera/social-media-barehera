@@ -10,55 +10,69 @@ import { db } from "../../../firebase";
 import Post from "../Posts/Post/Post";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sessionUserFollowsId, setSessionUserFollowsId] = useState([]);
+
   const { data: session } = useSession();
 
   //Getting Followed People -- session user
   useEffect(() => {
     if (session) {
-      const unsubscribe = onSnapshot(
-        query(
-          collection(db, "users", session.user.uid, "follows"),
-          where("username", "!=", null)
-        ),
-        (snapshot) => {
-          let docIdArray = [];
-          snapshot.docs.map((doc) => {
-            docIdArray.push(doc.id);
-          });
-          docIdArray.push(session.user.uid);
-          setSessionUserFollowsId(docIdArray);
-        }
-      );
-      return unsubscribe;
+      const getPosts = async () => {
+        setPosts([]);
+        setLoading(true);
+        const unsubscribeFollowedUsers = onSnapshot(
+          query(
+            collection(db, "users", session.user.uid, "follows"),
+            where("username", "!=", null)
+          ),
+          (followedUser) => {
+            followedUser.docs.map(async (user) => {
+              const unsubscribeFollowedUserPosts = onSnapshot(
+                query(
+                  collection(db, "users", user.id, "posts"),
+                  orderBy("timestamp", "desc")
+                ),
+                (snapshot) => {
+                  snapshot.docs.map((doc) => {
+                    setPosts((posts) => [
+                      ...posts,
+                      { ...doc.data(), id: doc.id },
+                    ]);
+                  });
+                  //Posts need to be sorted
+                  setLoading(false);
+                }
+              );
+
+              return unsubscribeFollowedUserPosts;
+            });
+          }
+        );
+        const unsubscribeSessionUserPosts = onSnapshot(
+          query(
+            collection(db, "users", session.user.uid, "posts"),
+            orderBy("timestamp", "desc")
+          ),
+          (snapshot) => {
+            snapshot.docs.map((doc) => {
+              let newPost = { ...doc.data(), id: doc.id };
+              setPosts((posts) => [...posts, newPost]);
+            });
+            //Posts need to be sorted
+            setLoading(false);
+          }
+        );
+        return unsubscribeFollowedUsers, unsubscribeSessionUserPosts;
+      };
+
+      getPosts();
     }
   }, [db, session?.user?.uid]);
-
-  //Session userın takip ettiği kullanıcıların ve kendi postlarını alma
-  useEffect(() => {
-    let postsArray = [];
-    sessionUserFollowsId.forEach(async (id) => {
-      const unsubscribe = onSnapshot(
-        query(
-          collection(db, "users", id, "posts"),
-          orderBy("timestamp", "desc")
-        ),
-        (snapshot) => {
-          snapshot.docs.map((doc) => {
-            postsArray.push({ ...doc.data(), id: doc.id });
-          });
-          //Posts need to be sorted
-          setPosts(postsArray);
-        }
-      );
-      return unsubscribe;
-    });
-  }, [sessionUserFollowsId, db]);
-
+  console.log(posts, "posts");
   return (
     <div>
       {loading ? (
