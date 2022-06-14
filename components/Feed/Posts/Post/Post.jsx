@@ -24,13 +24,14 @@ import { db } from "../../../../firebase";
 import Moment from "react-moment";
 import { useRouter } from "next/router";
 
-const Post = ({ userId, postId, username, userImg, img, caption }) => {
+const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const date = new Date(time.seconds * 1000);
 
   //Posts
   useEffect(() => {
@@ -138,17 +139,21 @@ const Post = ({ userId, postId, username, userImg, img, caption }) => {
       )}
 
       {/*Liked */}
-      <div className={`flex space-x-1 ${!session && "mt-4"}`}>
-        <div className="pl-5 flex space-x-1 items-center">
-          <p className="font-bold text-sm">{likes.length}</p>
-          <p className="text-sm ">{likes.length === 1 ? "Like" : "Likes"}</p>
+      <div className={`flex space-x-1 items-center ${!session && "mt-4"}`}>
+        <div className="flex flex-1 items-center">
+          <div className="pl-5 flex space-x-1 items-center">
+            <p className="font-bold text-sm">{likes.length}</p>
+            <p className="text-sm ">{likes.length === 1 ? "Like" : "Likes"}</p>
+          </div>
+          <div className="pl-4 flex space-x-1 items-center">
+            <p className="font-bold text-sm">{comments.length}</p>
+            <p className="text-sm ">
+              {comments.length === 1 ? "Comment" : "Comments"}
+            </p>
+          </div>
         </div>
-        <div className="pl-4 flex space-x-1 items-center">
-          <p className="font-bold text-sm">{comments.length}</p>
-          <p className="text-sm ">
-            {comments.length === 1 ? "Comment" : "Comments"}
-          </p>
-        </div>
+        <div>{time.seconds}</div>
+        <div className="pr-3 text-sm text-black font-light">{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`}</div>
       </div>
       {/*Caption */}
       <div className="p-5 flex gap-x-2 items-baseline">

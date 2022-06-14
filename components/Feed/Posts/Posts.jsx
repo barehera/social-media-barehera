@@ -15,22 +15,22 @@ import { useRouter } from "next/router";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [sessionFollows, setSessionFollows] = useState([]);
   const { data: session } = useSession();
 
   //Getting Followed People -- session user
   useEffect(() => {
     if (session) {
       const getPosts = async () => {
-        setPosts([]);
         setLoading(true);
         const unsubscribeFollowedUsers = onSnapshot(
           query(
             collection(db, "users", session.user.uid, "follows"),
             where("username", "!=", null)
           ),
-          (followedUser) => {
-            followedUser.docs.map(async (user) => {
+          (followedUsers) => {
+            setSessionFollows(followedUsers);
+            followedUsers.docs.map(async (user) => {
               const unsubscribeFollowedUserPosts = onSnapshot(
                 query(
                   collection(db, "users", user.id, "posts"),
@@ -68,11 +68,11 @@ const Posts = () => {
         );
         return unsubscribeFollowedUsers, unsubscribeSessionUserPosts;
       };
-
+      setPosts([]);
       getPosts();
     }
   }, [db, session?.user?.uid]);
-  console.log(posts, "posts");
+
   return (
     <div>
       {loading ? (
@@ -90,6 +90,7 @@ const Posts = () => {
               userImg={post.profileImg}
               img={post.image}
               caption={post.caption}
+              time={post.timestamp}
             ></Post>
           ))}
         </div>

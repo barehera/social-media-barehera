@@ -13,6 +13,8 @@ import { db } from "../../../firebase";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
+import Router from "next/router";
+
 const Suggestions = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
@@ -76,6 +78,8 @@ const Suggestions = () => {
       username: session.user.username,
       profileImg: session.user.image,
     });
+    //Reloading the page to fetch new followed users posts from firestore
+    Router.reload(window.location.pathname);
   };
 
   return (

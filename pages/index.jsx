@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
+import Router from "next/router";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -28,6 +29,14 @@ export default function Home() {
       }
     };
     addUserToDatabase();
+  }, [session]);
+
+  useEffect(() => {
+    if (!session) {
+      Router.push("/auth/signin");
+    } else {
+      Router.push("/");
+    }
   }, [session]);
 
   return (
