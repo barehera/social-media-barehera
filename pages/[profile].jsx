@@ -77,45 +77,26 @@ const Profile = () => {
         );
         //If Followed Get Posts from firestore
 
-        if (hasFollowed) {
-          const unsubscribePosts = onSnapshot(
-            query(
-              collection(db, "users", userId, "posts"),
-              orderBy("timestamp", "desc")
-            ),
-            (snapshot) => {
-              setPosts(snapshot.docs);
-              setLoading(false);
-            }
-          );
-          return unsubscribePosts;
-        } else {
-          setPosts([]);
-        }
+        const unsubscribePosts = onSnapshot(
+          query(
+            collection(db, "users", userId, "posts"),
+            orderBy("timestamp", "desc")
+          ),
+          (snapshot) => {
+            setPosts(snapshot.docs);
+            setLoading(false);
+          }
+        );
 
-        //Getting self profile posts
-        if (session?.user?.uid === userId) {
-          const unsubscribeSelfPosts = onSnapshot(
-            query(
-              collection(db, "users", userId, "posts"),
-              orderBy("timestamp", "desc")
-            ),
-            (snapshot) => {
-              setPosts(snapshot.docs);
-              setLoading(false);
-            }
-          );
-          return unsubscribeSelfPosts;
-        }
         setLoading(false);
-        return unsubscribeFollowers, unsubscribeFollows;
+        return unsubscribeFollowers, unsubscribeFollows, unsubscribePosts;
       }
     };
     setLoading(true);
     getUser();
   }, [profile, hasFollowed, session?.user?.uid]);
 
-  //Getting Followed People -- session user
+  //Getting Follows from firestore -- session user
   useEffect(() => {
     if (session) {
       const unsubscribe = onSnapshot(
@@ -128,7 +109,7 @@ const Profile = () => {
     }
   }, [db, session?.user?.uid]);
 
-  //Getting Followers -- session user
+  //Getting Followers from firestore -- session user
   useEffect(() => {
     if (session) {
       const unsubscribe = onSnapshot(
@@ -165,13 +146,13 @@ const Profile = () => {
   //HasFollowed ? function
   useEffect(() => {
     setHasFollowed(follows.findIndex((follow) => follow.id === user.id) !== -1);
-  }, [follows, session?.user?.uid]);
+  }, [follows, session?.user?.uid, user]);
 
   return (
     <>
       {loading ? (
         <div className="w-full h-screen flex items-center justify-center">
-          <FaSpinner size={40} className="animate-spin"></FaSpinner>{" "}
+          <FaSpinner size={40} className="animate-spin"></FaSpinner>
         </div>
       ) : (
         <div className="relative">
@@ -218,7 +199,7 @@ const Profile = () => {
                   )}
                 </div>
 
-                {/*Post and follower number */}
+                {/*Follows-Follower number */}
                 {followLoading ? (
                   <div className="gap-x-6 hidden md:flex">
                     <FaSpinner size={20} className="animate-spin"></FaSpinner>
@@ -233,13 +214,16 @@ const Profile = () => {
                       <p className="font-semibold">{userFollowers.length}</p>
                       <p className="text-sm">Follower</p>
                       {/*Followers show modal */}
-                      <div className="bg-white p-4 shadow-lg rounded w-48 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                      <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
                         {userFollowers.length > 0 ? (
                           <>
                             {userFollowers.map((follower) => (
                               <div
-                                className="flex space-x-2 w-full"
+                                className="flex space-x-2 w-full cursor-pointer hover:scale-110"
                                 key={follower.id}
+                                onClick={() =>
+                                  router.push(`/${follower.data().username}`)
+                                }
                               >
                                 <img
                                   src={follower.data().profileImg}
@@ -262,13 +246,16 @@ const Profile = () => {
                       <p className="text-sm">Follows</p>
                       {/*Follows show modal */}
 
-                      <div className="bg-white p-4 shadow-lg rounded w-48 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                      <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
                         {userFollows.length > 0 ? (
                           <>
                             {userFollows.map((follow) => (
                               <div
-                                className="flex space-x-2 w-full"
+                                className="flex space-x-2 w-full cursor-pointer hover:scale-110"
                                 key={follow.id}
+                                onClick={() =>
+                                  router.push(`/${follow.data().username}`)
+                                }
                               >
                                 <img
                                   src={follow.data().profileImg}
@@ -296,7 +283,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {/*Post and follower number -- MOBILE */}
+            {/*Follows-Follower number -- MOBILE */}
             {followLoading ? (
               <div className="md:hidden flex items-center px-6 justify-around  border-y border-gray-300 w-full py-4">
                 <FaSpinner size={30} className="animate-spin"></FaSpinner>
@@ -313,13 +300,16 @@ const Profile = () => {
                   </p>
                   <p className="text-sm text-gray-500">Follower</p>
                   {/*Followers show modal */}
-                  <div className="bg-white p-4 shadow-lg rounded w-48 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                  <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
                     {userFollowers.length > 0 ? (
                       <>
                         {userFollowers.map((follower) => (
                           <div
-                            className="flex space-x-2 w-full"
+                            className="flex space-x-2 w-full cursor-pointer hover:scale-110"
                             key={follower.id}
+                            onClick={() =>
+                              router.push(`/${follower.data().username}`)
+                            }
                           >
                             <img
                               src={follower.data().profileImg}
@@ -340,13 +330,16 @@ const Profile = () => {
                 <div className="flex flex-col items-center relative group">
                   <p className="font-semibold text-sm">{userFollows.length}</p>
                   <p className="text-sm text-gray-500">Follows</p>
-                  <div className="bg-white p-4 shadow-lg rounded w-48 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                  <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
                     {userFollows.length > 0 ? (
                       <>
                         {userFollows.map((follow) => (
                           <div
-                            className="flex space-x-2 w-full"
+                            className="flex space-x-2 w-full cursor-pointer hover:scale-110"
                             key={follow.id}
+                            onClick={() =>
+                              router.push(`/${follow.data().username}`)
+                            }
                           >
                             <img
                               src={follow.data().profileImg}
@@ -383,62 +376,74 @@ const Profile = () => {
             {/*Posts*/}
             {session ? (
               <div>
-                {posts.length > 0 ? (
+                {session?.user?.uid === user.id ? (
                   <div>
-                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
-                      {posts.map((post) => (
-                        <ProfilePost
-                          key={post.id}
-                          userId={post.data().userId}
-                          postId={post.id}
-                          post={post}
-                        ></ProfilePost>
-                      ))}
-                    </div>
+                    {posts.length > 0 ? (
+                      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
+                        {posts.map((post) => (
+                          <ProfilePost
+                            key={post.id}
+                            userId={post.data().userId}
+                            postId={post.id}
+                            post={post}
+                          ></ProfilePost>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-center justify-center h-40 mx-auto">
+                          <div className="w-full flex flex-col items-center justify-center px-6">
+                            <h4 className="font-semibold text-center mb-2">
+                              Hayatından kareleri çekip paylaşmaya başla.
+                            </h4>
+                            <p className="text-sm text-center ">
+                              ilk fotoğrafını paylasmak icin + butonuna tıkla
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-center">
+                          <img
+                            src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
+                            alt="picture"
+                            className="w-full h-auto object-contain"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div>
                     {hasFollowed ? (
                       <div>
-                        <div className="flex items-center justify-center h-40 mx-auto">
-                          <div className="w-full flex flex-col items-center justify-center px-6">
-                            <h4 className="text-center mb-2 text-gray-500">
-                              <b className="px-1 text-black">{user.username}</b>
-                              has no posts at the moment...
-                            </h4>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        {session?.user?.uid === user.id ? (
-                          <div>
-                            <div className="flex items-center justify-center h-40 mx-auto">
-                              <div className="w-full flex flex-col items-center justify-center px-6">
-                                <h4 className="font-semibold text-center mb-2">
-                                  Hayatından kareleri çekip paylaşmaya başla.
-                                </h4>
-                                <p className="text-sm text-center ">
-                                  ilk fotoğrafını veya videonu paylaşmak için
-                                  uygulamayı yükle.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-center">
-                              <img
-                                src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
-                                alt="picture"
-                                className="w-full h-auto object-contain"
-                              />
-                            </div>
+                        {posts.length > 0 ? (
+                          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
+                            {posts.map((post) => (
+                              <ProfilePost
+                                key={post.id}
+                                userId={post.data().userId}
+                                postId={post.id}
+                                post={post}
+                              ></ProfilePost>
+                            ))}
                           </div>
                         ) : (
-                          <div className="w-full h-40 flex items-center justify-center text-gray-500">
-                            You have to follow
-                            <b className="px-1 text-black">{user.username}</b>to
-                            see posts...
+                          <div className="flex items-center justify-center h-40 mx-auto">
+                            <div className="w-full flex flex-col items-center justify-center px-6">
+                              <h4 className="text-center mb-2 text-gray-500">
+                                <b className="px-1 text-black">
+                                  {user.username}
+                                </b>
+                                has no posts at the moment...
+                              </h4>
+                            </div>
                           </div>
                         )}
+                      </div>
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center text-gray-500 text-center">
+                        You have to follow
+                        <b className="px-1 text-black">{user.username}</b>to see
+                        posts...
                       </div>
                     )}
                   </div>

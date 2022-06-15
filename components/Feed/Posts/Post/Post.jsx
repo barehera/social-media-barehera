@@ -31,7 +31,8 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
-  const date = new Date(time.seconds * 1000);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const date = new Date(time?.seconds * 1000);
 
   //Posts
   useEffect(() => {
@@ -82,7 +83,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       );
     }
   };
-
+  //Commenting Function
   const sendComment = async (e) => {
     e.preventDefault();
 
@@ -97,24 +98,54 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
     });
   };
 
+  //Deleting Post Function
+
+  const deletePost = async (userId, postId) => {
+    if (session?.user?.uid === userId) {
+      await deleteDoc(doc(db, "users", userId, "posts", postId));
+      router.reload(window.location.pathname);
+    } else {
+      alert("You are not user!!!!");
+    }
+  };
+
   return (
     <div className="bg-white my-7 border rounded-sm ">
       {/*Header */}
       <div className="flex items-center justify-between p-4">
-        <img
-          src={userImg}
-          alt="user post picture"
-          className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
-          onClick={() => router.push(`${username}`)}
-        />
-        <p
-          className="flex-1 font-bold cursor-pointer"
-          onClick={() => router.push(`${username}`)}
-        >
-          {username}
-        </p>
+        <div className="flex-1 flex items-center">
+          <img
+            src={userImg}
+            alt="user post picture"
+            className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
+            onClick={() => router.push(`${username}`)}
+          />
+          <p
+            className="font-bold cursor-pointer"
+            onClick={() => router.push(`${username}`)}
+          >
+            {username}
+          </p>
+        </div>
 
-        <DotsHorizontalIcon className="h-5"></DotsHorizontalIcon>
+        {session?.user?.uid === userId && (
+          <div className="relative flex items-center">
+            {deleteModalOpen && (
+              <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
+                <button
+                  className="truncate text-blue-400 text-sm"
+                  onClick={() => deletePost(userId, postId)}
+                >
+                  Delete Post
+                </button>
+              </div>
+            )}
+            <DotsHorizontalIcon
+              className="h-5 cursor-pointer"
+              onClick={() => setDeleteModalOpen(!deleteModalOpen)}
+            ></DotsHorizontalIcon>
+          </div>
+        )}
       </div>
       {/*İmage */}
       <img src={img} alt="Post image" className="object-cover w-full" />

@@ -10,7 +10,6 @@ import { db } from "../../../firebase";
 import Post from "../Posts/Post/Post";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -43,7 +42,7 @@ const Posts = () => {
                       { ...doc.data(), id: doc.id },
                     ]);
                   });
-                  //Posts need to be sorted
+
                   setLoading(false);
                 }
               );
@@ -62,7 +61,7 @@ const Posts = () => {
               let newPost = { ...doc.data(), id: doc.id };
               setPosts((posts) => [...posts, newPost]);
             });
-            //Posts need to be sorted
+
             setLoading(false);
           }
         );
@@ -72,6 +71,13 @@ const Posts = () => {
       getPosts();
     }
   }, [db, session?.user?.uid]);
+
+  //Sorting Posts
+  useEffect(() => {
+    posts.sort((x, y) => {
+      return y.timestamp?.seconds * 1000 - x.timestamp?.seconds * 1000;
+    });
+  }, [posts]);
 
   return (
     <div>

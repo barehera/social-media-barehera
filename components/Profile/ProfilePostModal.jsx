@@ -35,6 +35,7 @@ const ProfilePostModal = () => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [hasLiked, setHasLiked] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { data: session } = useSession();
 
   //getting user posts from firestore
@@ -171,6 +172,16 @@ const ProfilePostModal = () => {
     }
   };
 
+  //Deleting Post Function
+
+  const deletePost = async (userId, postId) => {
+    if (session?.user?.uid === userPost.userId) {
+      await deleteDoc(doc(db, "users", userId, "posts", postId));
+      router.reload(window.location.pathname);
+    } else {
+      alert("You are not user!!!!");
+    }
+  };
   return (
     <>
       {open && (
@@ -196,9 +207,26 @@ const ProfilePostModal = () => {
                   />
                   <p className="text-sm font-semibold">{post.username}</p>
                 </div>
-                <p>
-                  <TbDots size={20} className="cursor-pointer"></TbDots>
-                </p>
+                {session?.user?.uid === userPost.userId && (
+                  <div className="relative flex items-center">
+                    {deleteModalOpen && (
+                      <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
+                        <button
+                          className="truncate text-blue-400 text-sm"
+                          onClick={() =>
+                            deletePost(userPost.userId, userPost.postId)
+                          }
+                        >
+                          Delete Post
+                        </button>
+                      </div>
+                    )}
+                    <TbDots
+                      className="h-5 cursor-pointer"
+                      onClick={() => setDeleteModalOpen(!deleteModalOpen)}
+                    ></TbDots>
+                  </div>
+                )}
               </div>
               {/*Comments */}
               <div className="py-5 border-y border-gray-300 lg:h-80">
