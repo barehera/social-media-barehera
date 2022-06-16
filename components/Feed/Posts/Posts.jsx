@@ -72,13 +72,6 @@ const Posts = () => {
     }
   }, [db, session?.user?.uid]);
 
-  //Sorting Posts
-  useEffect(() => {
-    posts.sort((x, y) => {
-      return y.timestamp?.seconds * 1000 - x.timestamp?.seconds * 1000;
-    });
-  }, [posts]);
-
   return (
     <div>
       {loading ? (

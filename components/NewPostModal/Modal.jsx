@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import Router from "next/router";
 
 const Modal = () => {
   const { data: session } = useSession();
@@ -64,6 +65,7 @@ const Modal = () => {
     setOpen(false);
     setLoading(false);
     setSelectedFile(null);
+    Router.reload(window.location.pathname);
   };
 
   const addImageToPost = (e) => {
