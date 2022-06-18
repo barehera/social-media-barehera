@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BiMessageSquareEdit } from "react-icons/bi";
 import UserMessageCard from "./UserMessageCard/UserMessageCard";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useRecoilState } from "recoil";
 import { messagesUsers } from "../../../atoms/messagesUsersAtom";
@@ -13,21 +13,26 @@ const DirectLeftSide = () => {
 
   useEffect(() => {
     setUsers([]);
-    const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      snapshot.docs.forEach((doc) =>
-        setUsers((users) => [...users, { ...doc.data(), id: doc.id }])
+    if (session) {
+      const unsub = onSnapshot(
+        query(
+          collection(db, "users", session?.user?.uid, "follows"),
+          where("username", "!=", session?.user?.username)
+        ),
+        (snapshot) => {
+          snapshot.docs.forEach((doc) =>
+            setUsers((users) => [...users, { ...doc.data(), id: doc.id }])
+          );
+        }
       );
-    });
-    return unsub;
-  }, [db]);
+      return unsub;
+    }
+  }, [db, session]);
   return (
-    <div className="w-2/6 h-full border-r">
+    <div className="w-3/6 md:w-2/6 h-full border-r ">
       {/*session username and create message */}
       <div className="h-16 flex items-center justify-center relative border-b">
         <h1 className="font-semibold text-sm">{session?.user?.username}</h1>
-        <div className="absolute right-5 cursor-pointer hover:scale-110 transition-all">
-          <BiMessageSquareEdit size={24}></BiMessageSquareEdit>
-        </div>
       </div>
       {/*session user and users messages */}
       <div className="py-3 overflow-auto max-h-[calc(100%_-_61px)] scrollbar-thin scrollbar-thumb-gray-200">
