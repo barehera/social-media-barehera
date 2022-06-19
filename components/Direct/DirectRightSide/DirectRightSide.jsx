@@ -115,7 +115,7 @@ const DirectRightSide = () => {
     <>
       <div className="w-4/6">
         {selectedUser ? (
-          <div className="w-full h-full flex flex-col">
+          <div className="w-full h-full flex flex-col ">
             {/*Header */}
             <div className="flex items-center h-16 border-b px-5">
               <div className="flex items-center flex-1">
@@ -159,7 +159,7 @@ const DirectRightSide = () => {
                         className="w-7 h-7 rounded-full"
                       ></img>
                       <div className="relative">
-                        <p className="bg-gray-100  rounded-xl p-3 text-sm w-48 md:w-96 break-words">
+                        <p className="bg-gray-100  rounded-xl p-3 text-sm w-24 md:w-96 break-words">
                           {message.message}
                         </p>
                         <Moment
@@ -174,7 +174,7 @@ const DirectRightSide = () => {
                   ) : (
                     <div className="flex items-baseline gap-x-2 mb-5">
                       <div className="relative">
-                        <p className="bg-gray-100 rounded-xl p-3 text-sm w-48 md:w-96 break-words">
+                        <p className="bg-gray-100 rounded-xl p-3 text-sm w-24 md:w-96 break-words">
                           {message.message}
                         </p>
                         <Moment

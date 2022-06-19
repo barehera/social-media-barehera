@@ -56,15 +56,10 @@ const Header = () => {
 
           {session ? (
             <>
-              <div
-                className="relative navButton"
-                onClick={() => router.push("/direct")}
-              >
-                <AiOutlineMessage className="navButton"></AiOutlineMessage>
-                <div className="absolute -top-2 -right-1 text-xs w-5 h-5 bg-red-500 rounded-full flex items-center justify-center animate-pulse text-white">
-                  3
-                </div>
-              </div>
+              <AiOutlineMessage
+                className="navButton"
+                onClick={() => router.push(`/direct`)}
+              ></AiOutlineMessage>
               <AiOutlinePlusCircle
                 onClick={() => setOpen(true)}
                 className="navButton"

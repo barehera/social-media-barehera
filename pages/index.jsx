@@ -10,7 +10,7 @@ import Router from "next/router";
 
 export default function Home() {
   const { data: session } = useSession();
-
+  //add session user to database
   useEffect(() => {
     const addUserToDatabase = async () => {
       if (session) {

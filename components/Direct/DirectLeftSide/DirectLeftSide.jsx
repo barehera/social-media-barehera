@@ -16,7 +16,7 @@ const DirectLeftSide = () => {
     if (session) {
       const unsub = onSnapshot(
         query(
-          collection(db, "users", session?.user?.uid, "follows"),
+          collection(db, "users"),
           where("username", "!=", session?.user?.username)
         ),
         (snapshot) => {
@@ -30,11 +30,11 @@ const DirectLeftSide = () => {
   }, [db, session]);
   return (
     <div className="w-3/6 md:w-2/6 h-full border-r ">
-      {/*session username and create message */}
+      {/*session username*/}
       <div className="h-16 flex items-center justify-center relative border-b">
         <h1 className="font-semibold text-sm">{session?.user?.username}</h1>
       </div>
-      {/*session user and users messages */}
+      {/*session users messages */}
       <div className="py-3 overflow-auto max-h-[calc(100%_-_61px)] scrollbar-thin scrollbar-thumb-gray-200">
         {users?.map((user) => (
           <UserMessageCard key={user.id} user={user}></UserMessageCard>
