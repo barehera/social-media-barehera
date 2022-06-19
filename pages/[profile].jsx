@@ -170,7 +170,10 @@ const Profile = () => {
                 <div className="flex flex-col md:flex-row items-start gap-x-4 md:items-center gap-y-2">
                   <h4 className="text-lg font-light">{user?.username}</h4>
                   {session?.user?.username == user.username && (
-                    <button className="text-sm border rounded-sm border-gray-300 py-1 px-4 font-semibold md:w-36 ">
+                    <button
+                      className="text-sm border rounded-sm border-gray-300 py-1 px-4 font-semibold md:w-36 "
+                      onClick={() => alert("work in progress!")}
+                    >
                       Edit Profile
                     </button>
                   )}
@@ -364,11 +367,17 @@ const Profile = () => {
                 <IoMdGrid className="text-blue-400 " size={24}></IoMdGrid>
                 <p className="hidden md:flex">Gönderiler</p>
               </div>
-              <div className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all">
+              <div
+                className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all"
+                onClick={() => alert("work in progress!")}
+              >
                 <AiOutlineFlag size={24}></AiOutlineFlag>
                 <p className="hidden md:flex">Kaydedilenler</p>
               </div>
-              <div className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all">
+              <div
+                className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all"
+                onClick={() => alert("work in progress!")}
+              >
                 <HiOutlineUserGroup size={24}></HiOutlineUserGroup>
                 <p className="hidden md:flex">Etiketlenenler</p>
               </div>

@@ -53,8 +53,8 @@ const UserMessageCard = ({ user }) => {
         {messages && (
           <div className=" text-gray-500 flex flex-col items-start gap-x-1">
             <p className="text-sm">
-              {messages[messages.length - 1]?.message.slice(0, 10)}
-              {messages[messages.length - 1]?.message.length > 10 && "..."}
+              {messages[messages.length - 1]?.message.slice(0, 25)}
+              {messages[messages.length - 1]?.message.length > 25 && "..."}
             </p>
             {messages[messages.length - 1]?.timestamp && (
               <Moment

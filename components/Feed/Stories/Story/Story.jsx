@@ -3,7 +3,10 @@ import { BsPlusCircle } from "react-icons/bs";
 
 const Story = ({ img, username, self }) => {
   return (
-    <div className="flex flex-col items-center justify-center ">
+    <div
+      className="flex flex-col items-center justify-center "
+      onClick={() => alert("work in progress!")}
+    >
       <div className="relative w-16 h-16 mb-1">
         <img
           src={img}
@@ -15,7 +18,7 @@ const Story = ({ img, username, self }) => {
         {self && (
           <BsPlusCircle
             size={20}
-            className="text-gray-100 absolute top-0 right-0 bg-gray-400 rounded-full"
+            className="text-gray-100 absolute top-0 right-0 bg-gray-400 rounded-full "
           ></BsPlusCircle>
         )}
       </div>

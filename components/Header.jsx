@@ -41,14 +41,17 @@ const Header = () => {
             </div>
             <input
               className="w-80 placeholder:text-slate-500 block bg-gray-100  border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-black sm:text-sm "
-              placeholder="Search"
+              placeholder="Work in Progress..."
               type="text"
             />
           </div>
         </div>
         {/*right*/}
         <div className="flex items-center justify-end space-x-4">
-          <AiOutlineSearch className="navButton md:hidden"></AiOutlineSearch>
+          <AiOutlineSearch
+            className="navButton md:hidden"
+            onClick={() => alert("work in progress!")}
+          ></AiOutlineSearch>
           <AiOutlineHome
             onClick={() => router.push("/")}
             className="navButton"
