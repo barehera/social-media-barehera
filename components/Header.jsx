@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
@@ -11,12 +11,53 @@ import {
   AiOutlineLogout,
   AiOutlineHome,
 } from "react-icons/ai";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Header = () => {
   const { data: session } = useSession();
+  const [users, setUsers] = useState([]);
+  const [searchOpen, setSearchOpen] = useState(false);
   const router = useRouter();
   const [open, setOpen] = useRecoilState(modalState);
+  const [inputText, setInputText] = useState("");
 
+  const inputHandler = (e) => {
+    //convert input text to lower case
+    var lowerCase = e.target.value.toLowerCase();
+    setInputText(lowerCase);
+  };
+
+  const filteredUser = users.filter((user) => {
+    //if no input the return the original
+    if (inputText === "") {
+      return user.username;
+    }
+    //return the item which contains the user input
+    else {
+      return user.username.toLowerCase().includes(inputText);
+    }
+  });
+
+  useEffect(() => {
+    if (inputText.length > 0) {
+      setSearchOpen(true);
+    } else {
+      setSearchOpen(false);
+    }
+  }, [inputText]);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      setUsers([]);
+      const q = query(collection(db, "users"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setUsers((users) => [...users, { ...doc.data(), id: doc.id }]);
+      });
+    };
+    getUsers();
+  }, []);
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-30">
       <div className="flex justify-between max-w-5xl mx-auto p-1 md:py-1 items-center">
@@ -41,16 +82,35 @@ const Header = () => {
             </div>
             <input
               className="w-80 placeholder:text-slate-500 block bg-gray-100  border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-black sm:text-sm "
-              placeholder="Work in Progress..."
+              placeholder="Search"
               type="text"
+              onChange={inputHandler}
             />
           </div>
+          {searchOpen && (
+            <div className="bg-white w-96 h-96 absolute -bottom-96 border overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
+              {filteredUser.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center gap-x-2 p-2 cursor-pointer hover:bg-gray-100 transition-all ease-out"
+                  onClick={() => router.push(`/${user.username}`)}
+                >
+                  <img
+                    src={user.profileImg}
+                    alt=""
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <p>{user.username}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         {/*right*/}
         <div className="flex items-center justify-end space-x-4">
           <AiOutlineSearch
             className="navButton md:hidden"
-            onClick={() => alert("work in progress!")}
+            onClick={() => router.push("/search")}
           ></AiOutlineSearch>
           <AiOutlineHome
             onClick={() => router.push("/")}
