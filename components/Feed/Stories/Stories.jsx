@@ -11,7 +11,7 @@ const Stories = () => {
     const getRandomUser = async () => {
       setLoading(true);
       await axios
-        .get("https://randomuser.me/api/?results=20")
+        .get("https://randomuser.me/api/?results=30")
         .then((data) => {
           setUsers(data.data.results);
           setLoading(false);
