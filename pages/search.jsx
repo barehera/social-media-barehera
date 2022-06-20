@@ -5,7 +5,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRouter } from "next/router";
 
-const search = () => {
+const Search = () => {
   const [users, setUsers] = useState([]);
   const router = useRouter();
   const [inputText, setInputText] = useState("");
@@ -93,4 +93,4 @@ const search = () => {
   );
 };
 
-export default search;
+export default Search;

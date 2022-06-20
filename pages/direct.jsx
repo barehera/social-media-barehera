@@ -1,13 +1,13 @@
 import React from "react";
 import Header from "../components/Header";
-import Direct from "../components/Direct/Direct";
-const direct = () => {
+import DirectMain from "../components/Direct/DirectMain";
+const Direct = () => {
   return (
     <div>
       <Header></Header>
-      <Direct></Direct>
+      <DirectMain></DirectMain>
     </div>
   );
 };
 
-export default direct;
+export default Direct;
