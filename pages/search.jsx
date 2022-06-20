@@ -52,7 +52,7 @@ const search = () => {
   return (
     <div>
       <Header></Header>
-      <div className="flex items-center justify-center mt-5 ">
+      <div className="flex items-center justify-center mt-10 ">
         <div className="flex flex-col items-center justify-center w-full mx-4">
           <div className="relative block ">
             <span className="sr-only">Search</span>
