@@ -10,7 +10,7 @@ const Story = ({ img, username, self }) => {
       <div className="relative w-16 h-16 mb-1">
         <img
           src={img}
-          alt="user pic"
+          alt=""
           className={`rounded-full w-full h-full border-2 ${
             self && "!border-gray-300"
           } border-red-500 p-[2px] object-contain cursor-pointer hover:scale-110 transition-all duration-200 ease-out`}

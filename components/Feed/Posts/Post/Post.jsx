@@ -116,7 +116,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
         <div className="flex-1 flex items-center">
           <img
             src={userImg}
-            alt="user post picture"
+            alt=""
             className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
             onClick={() => router.push(`${username}`)}
           />
@@ -184,7 +184,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
           </div>
         </div>
 
-        <div className="pr-3 text-sm text-black font-light">{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`}</div>
+        <div className="pr-3 text-sm text-black font-light">{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</div>
       </div>
       {/*Caption */}
       <div className="p-5 flex gap-x-2 items-baseline">

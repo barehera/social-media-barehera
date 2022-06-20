@@ -26,13 +26,13 @@ const Stories = () => {
   return (
     <div>
       {loading ? (
-        <div className="p-4 flex gap-x-4 bg-white rounded-sm mt-6 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-50 ">
+        <div className="p-4 flex gap-x-4 bg-white rounded-sm mt-6 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50 ">
           {[...Array(30)].map((e, i) => (
             <StoryLoader key={i}>♦</StoryLoader>
           ))}
         </div>
       ) : (
-        <div className="p-4 flex gap-x-4 bg-white rounded-sm mt-6 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-50">
+        <div className="p-4 flex gap-x-4 bg-white rounded-sm mt-6 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50">
           {session && (
             <Story
               key={session.user.uid}

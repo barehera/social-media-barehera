@@ -17,14 +17,19 @@ const signIn = ({ providers }) => {
             <input
               type="text"
               placeholder="E-mail"
+              disabled
               className="outline-none border-gray-300 h-8 placeholder:text-gray-500 placeholder:text-sm rounded-sm bg-gray-50"
             />
             <input
               type="password"
               placeholder="Password"
+              disabled
               className="outline-none border-gray-300 h-8 placeholder:text-gray-500 placeholder:text-sm rounded-sm bg-gray-50"
             />
-            <button className="w-full bg-blue-400 text-white p-1 rounded-sm">
+            <button
+              className="w-full bg-blue-400 text-white p-1 rounded-sm"
+              onClick={() => alert("work in progress...")}
+            >
               Login
             </button>
           </div>
@@ -47,7 +52,10 @@ const signIn = ({ providers }) => {
                 </button>
               </div>
             ))}
-            <p className="text-sm text-gray-500 cursor-pointer">
+            <p
+              className="text-sm text-gray-500 cursor-pointer"
+              onClick={() => alert("work in progress...")}
+            >
               Forgot your password?
             </p>
           </div>
@@ -55,7 +63,12 @@ const signIn = ({ providers }) => {
         {/*Dont have an account card */}
         <div className="w-full bg-white flex items-center justify-center p-4 gap-x-2 border border-gray-300 max-w-md">
           <h4>Dont have a account?</h4>
-          <button className="text-blue-400">Sign in</button>
+          <button
+            className="text-blue-400"
+            onClick={() => alert("work in progress...")}
+          >
+            Sign in
+          </button>
         </div>
         {/*mobile download links */}
         <div className="flex flex-col items-center justify-center max-w-md">
@@ -65,11 +78,13 @@ const signIn = ({ providers }) => {
               src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_turkish-tr.png/30b29fd697b2.png"
               alt="appstore download"
               className="w-36  object-contain cursor-pointer"
+              onClick={() => alert("work in progress...")}
             />
             <img
               src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_turkish-tr.png/9d46177cf153.png"
               alt="googleplay download"
               className="w-36  object-contain cursor-pointer"
+              onClick={() => alert("work in progress...")}
             />
           </div>
         </div>
