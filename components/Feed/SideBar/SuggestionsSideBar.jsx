@@ -12,10 +12,9 @@ import {
 import { db } from "../../../firebase";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-
 import Router from "next/router";
 
-const Suggestions = () => {
+const SuggestionsSideBar = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -30,12 +29,10 @@ const Suggestions = () => {
         where("username", "!=", session.user.username)
       );
       const querySnapshot = await getDocs(q);
-      let users = [];
+      setAllUsers([]);
       querySnapshot.forEach((doc) => {
-        let docData = doc.data();
-        users.push({ ...docData, id: doc.id });
+        setAllUsers((allUsers) => [...allUsers, { ...doc.data(), id: doc.id }]);
       });
-      setAllUsers(users);
 
       //Session user's Follows
       const unsubscribeFollows = onSnapshot(
@@ -44,27 +41,30 @@ const Suggestions = () => {
           where("username", "!=", null)
         ),
         (snapshot) => {
-          let id = [];
-          snapshot.docs.forEach((doc) => id.push(doc.id));
-          setSessionUserFollowsId(id);
+          snapshot.docs.forEach((doc) => {
+            setSessionUserFollowsId((sessionUserFollowsId) => [
+              ...sessionUserFollowsId,
+              doc.id,
+            ]);
+            setLoading(false);
+          });
         }
       );
       return unsubscribeFollows;
     };
+    setLoading(true);
     getUsers();
   }, [db]);
 
   useEffect(() => {
     //Filtering All Users with using session users follows
-    setLoading(true);
-    let filteredArray = [];
+
+    setFilteredUser([]);
     allUsers
       .filter(({ id }) => !sessionUserFollowsId.includes(id))
       .forEach((filter) => {
-        filteredArray.push(filter);
+        setFilteredUser((filteredUser) => [...filteredUser, filter]);
       });
-    setFilteredUser(filteredArray);
-    setLoading(false);
   }, [db, allUsers, sessionUserFollowsId]);
 
   //Follow Unfollow Function
@@ -92,11 +92,18 @@ const Suggestions = () => {
         <div className="mt-4 ">
           <div className="flex justify-between mb-4 items-center">
             <h4 className="text-gray-400">Suggestions for you</h4>
-            <button>See All</button>
+            {filteredUser.length > 5 && (
+              <button
+                onClick={() => router.push("/suggestions")}
+                className="hover:scale-110 transition-all duration-300 ease-out"
+              >
+                See All
+              </button>
+            )}
           </div>
           {filteredUser.length > 0 ? (
             <div className="flex flex-col gap-y-4">
-              {filteredUser.map((user) => (
+              {filteredUser.slice(0, 5).map((user) => (
                 <div key={user.id} className="flex items-center space-x-4">
                   <img
                     src={user.profileImg}
@@ -116,7 +123,7 @@ const Suggestions = () => {
                     </p>
                   </div>
                   <button
-                    className="text-blue-400 hover:scale-110 transition-all ease-out"
+                    className="text-blue-400 hover:scale-110 transition-all duration-300 ease-out"
                     onClick={() =>
                       handleFollow(user.id, user.username, user.profileImg)
                     }
@@ -137,4 +144,4 @@ const Suggestions = () => {
   );
 };
 
-export default Suggestions;
+export default SuggestionsSideBar;

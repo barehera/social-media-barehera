@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import MiniProfile from "./SideBar/MiniProfile";
 import Posts from "./Posts/Posts";
 import Stories from "../Feed/Stories/Stories";
-import Suggestions from "./SideBar/Suggestions";
+import SuggestionsSideBar from "./SideBar/SuggestionsSideBar";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -21,7 +21,7 @@ const Feed = () => {
           <section className=" hidden xl:inline-grid md:col-span-1 mt-6 ml-10">
             <div className="fixed ">
               <MiniProfile></MiniProfile>
-              <Suggestions></Suggestions>
+              <SuggestionsSideBar></SuggestionsSideBar>
             </div>
           </section>
         )}

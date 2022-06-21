@@ -10,6 +10,7 @@ import {
   AiOutlineSearch,
   AiOutlineLogout,
   AiOutlineHome,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
@@ -107,7 +108,7 @@ const Header = () => {
           )}
         </div>
         {/*right*/}
-        <div className="flex items-center justify-end space-x-4">
+        <div className="flex items-center justify-end space-x-1 md:space-x-3 lg:space-x-4">
           <AiOutlineSearch
             className="navButton md:hidden"
             onClick={() => router.push("/search")}
@@ -119,6 +120,10 @@ const Header = () => {
 
           {session ? (
             <>
+              <AiOutlineUsergroupAdd
+                className="navButton xl:hidden"
+                onClick={() => router.push(`/suggestions`)}
+              ></AiOutlineUsergroupAdd>
               <AiOutlineMessage
                 className="navButton"
                 onClick={() => router.push(`/direct`)}

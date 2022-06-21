@@ -2,7 +2,7 @@ import React from "react";
 import DirectLeftSide from "./DirectLeftSide/DirectLeftSide";
 import DirectRightSide from "./DirectRightSide/DirectRightSide";
 
-const Direct = () => {
+const DirectMain = () => {
   return (
     <div className="bg-gray-100 w-full h-[calc(100vh_-_57px)] flex items-center justify-center">
       <div className="h-[calc(100%_-_3rem)] max-w-5xl w-full border border-gray-200 rounded-md bg-white flex ">
@@ -13,4 +13,4 @@ const Direct = () => {
   );
 };
 
-export default Direct;
+export default DirectMain;
