@@ -54,8 +54,10 @@ const Suggestions = () => {
       );
       return unsubscribeFollows;
     };
-    setLoading(true);
-    getUsers();
+    if (session) {
+      setLoading(true);
+      getUsers();
+    }
   }, [db]);
 
   useEffect(() => {
@@ -69,6 +71,14 @@ const Suggestions = () => {
       });
   }, [db, allUsers, sessionUserFollowsId]);
 
+  useEffect(() => {
+    if (!session) {
+      Router.push("/auth/signin");
+    } else {
+      Router.push("/suggestions");
+    }
+  }, [session]);
+
   return (
     <div>
       <Header></Header>
@@ -77,7 +87,7 @@ const Suggestions = () => {
           Suggestions For You
         </h4>
         {filteredUser.length > 0 ? (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid items-center justify-center md:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredUser.map((user) => (
               <div
                 key={user.id}

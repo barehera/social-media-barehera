@@ -4,14 +4,7 @@ import Feed from "../components/Feed/Feed";
 import Modal from "../components/NewPostModal/Modal";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import {
-  setDoc,
-  doc,
-  collection,
-  where,
-  query,
-  getDoc,
-} from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Router from "next/router";
 
