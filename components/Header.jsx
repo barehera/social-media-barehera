@@ -108,7 +108,7 @@ const Header = () => {
           )}
         </div>
         {/*right*/}
-        <div className="flex items-center justify-end space-x-1 md:space-x-3 lg:space-x-4">
+        <div className="flex items-center justify-end space-x-1 sm:space-x-2  md:space-x-3 lg:space-x-4">
           <AiOutlineSearch
             className="navButton md:hidden"
             onClick={() => router.push("/search")}

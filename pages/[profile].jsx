@@ -24,6 +24,7 @@ import ProfilePost from "../components/Profile/ProfilePost";
 import ProfilePostModal from "../components/Profile/ProfilePostModal";
 import { useRecoilState } from "recoil";
 import { profileUserPost } from "../atoms/profilePostModalAtom";
+import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
 
 const Profile = () => {
   //Router
@@ -499,7 +500,8 @@ const Profile = () => {
                 )}
               </div>
               <Modal></Modal>
-              {userPost && <ProfilePostModal></ProfilePostModal>}
+              <NewProfilePostModal></NewProfilePostModal>
+              {/*userPost && <ProfilePostModal></ProfilePostModal>*/}
             </div>
           )}
         </>
