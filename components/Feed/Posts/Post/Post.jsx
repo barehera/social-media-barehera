@@ -221,8 +221,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       )}
       {/*input box */}
       {session && (
-        <form className="flex items-center p-4">
-          <EmojiHappyIcon className="postButton "></EmojiHappyIcon>
+        <form className="flex items-center p-2">
           <input
             type="text"
             value={comment}
@@ -234,7 +233,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
             type="submit"
             disabled={!comment.trim()}
             onClick={sendComment}
-            className="font-semibold text-blue-400 cursor-pointer"
+            className="font-semibold text-blue-400 cursor-pointer mr-2"
           >
             Post
           </button>

@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { AiOutlineClose, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
-import { TbDots, TbMoodHappy } from "react-icons/tb";
+import { TbDots } from "react-icons/tb";
 import Moment from "react-moment";
 import { useRecoilState } from "recoil";
 import {
@@ -31,7 +31,6 @@ const NewProfilePostModal = () => {
 
   //OLD PROFILE POST
   const router = useRouter();
-
   const [open, setOpen] = useRecoilState(profilePostModalAtom);
   const [userPost, setUserPost] = useRecoilState(profileUserPost);
   const [post, setPost] = useState([]);
@@ -212,7 +211,7 @@ const NewProfilePostModal = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-80 transition-opacity" />
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-80 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed w-full  z-10 inset-0 overflow-y-auto">
@@ -346,11 +345,7 @@ const NewProfilePostModal = () => {
                     {/*input box */}
                     <div>
                       {session && (
-                        <form className="flex items-center p-4">
-                          <TbMoodHappy
-                            className="postButton"
-                            size={24}
-                          ></TbMoodHappy>
+                        <form className="flex items-center p-2">
                           <input
                             type="text"
                             value={comment}
@@ -362,7 +357,7 @@ const NewProfilePostModal = () => {
                             type="submit"
                             disabled={!comment.trim()}
                             onClick={sendComment}
-                            className="font-semibold text-blue-400 cursor-pointer"
+                            className="font-semibold text-blue-400 cursor-pointer mr-2"
                           >
                             Post
                           </button>
@@ -373,6 +368,12 @@ const NewProfilePostModal = () => {
                 </div>
               </Dialog.Panel>
             </Transition.Child>
+            <div
+              className="absolute top-1 right-1  text-white cursor-pointer text-lg"
+              ref={cancelButtonRef}
+            >
+              <AiOutlineClose onClick={() => setOpen(false)}></AiOutlineClose>
+            </div>
           </div>
         </div>
       </Dialog>
