@@ -89,7 +89,7 @@ const Header = () => {
             />
           </div>
           {searchOpen && (
-            <div className="bg-white w-96 h-96 absolute -bottom-96 border overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
+            <div className="bg-white w-96 h-48 absolute -bottom-48 border overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
               {filteredUser.map((user) => (
                 <div
                   key={user.id}

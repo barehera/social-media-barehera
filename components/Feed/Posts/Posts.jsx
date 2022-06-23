@@ -10,12 +10,14 @@ import { db } from "../../../firebase";
 import Post from "../Posts/Post/Post";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [sortedPosts, setSortedPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   //Getting Followed People -- session user
   useEffect(() => {
@@ -62,7 +64,6 @@ const Posts = () => {
               let newPost = { ...doc.data(), id: doc.id };
               setPosts((posts) => [...posts, newPost]);
             });
-
             setLoading(false);
           }
         );
@@ -94,18 +95,35 @@ const Posts = () => {
         </div>
       ) : (
         <div className="my-8">
-          {sortedPosts?.map((post) => (
-            <Post
-              key={post.id}
-              postId={post.id}
-              userId={post.userId}
-              username={post.username}
-              userImg={post.profileImg}
-              img={post.image}
-              caption={post.caption}
-              time={post.timestamp}
-            ></Post>
-          ))}
+          {sortedPosts.length > 0 ? (
+            <>
+              {sortedPosts?.map((post) => (
+                <Post
+                  key={post.id}
+                  postId={post.id}
+                  userId={post.userId}
+                  username={post.username}
+                  userImg={post.profileImg}
+                  img={post.image}
+                  caption={post.caption}
+                  time={post.timestamp}
+                ></Post>
+              ))}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center">
+              <h1 className="text-lg font-bold ">NO POSTS</h1>
+              <p className="text-sm  text-gray-500">
+                You can find new friends and follow them to see their posts
+              </p>
+              <button
+                className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
+                onClick={() => router.push("/suggestions")}
+              >
+                Go Suggestions
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

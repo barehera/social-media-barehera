@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
 import { IoMdGrid } from "react-icons/io";
-import { AiOutlineFlag } from "react-icons/ai";
+import { AiOutlineFlag, AiOutlineLock } from "react-icons/ai";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import Modal from "../components/NewPostModal/Modal";
 import {
@@ -15,13 +15,11 @@ import {
   setDoc,
   doc,
   deleteDoc,
-  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import ProfilePost from "../components/Profile/ProfilePost";
-import ProfilePostModal from "../components/Profile/ProfilePostModal";
 import { useRecoilState } from "recoil";
 import { profileUserPost } from "../atoms/profilePostModalAtom";
 import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
@@ -213,92 +211,78 @@ const Profile = () => {
                     </div>
 
                     {/*Follows-Follower number */}
-                    {followLoading ? (
-                      <div className="gap-x-6 hidden md:flex">
-                        <FaSpinner
-                          size={20}
-                          className="animate-spin"
-                        ></FaSpinner>
-                      </div>
-                    ) : (
-                      <div className="gap-x-6 hidden md:flex">
-                        <div className="flex gap-x-1 items-center">
-                          <p className="font-semibold">{posts.length}</p>
-                          <p className="text-sm">Post</p>
-                        </div>
-                        <div className="flex gap-x-1 items-center relative group">
-                          <p className="font-semibold">
-                            {userFollowers.length}
-                          </p>
-                          <p className="text-sm">Follower</p>
-                          {/*Followers show modal */}
-                          <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
-                            {userFollowers.length > 0 ? (
-                              <>
-                                {userFollowers.map((follower) => (
-                                  <div
-                                    className="flex space-x-2 w-full cursor-pointer hover:scale-110"
-                                    key={follower.id}
-                                    onClick={() =>
-                                      router.push(
-                                        `/${follower.data().username}`
-                                      )
-                                    }
-                                  >
-                                    <img
-                                      src={follower.data().profileImg}
-                                      alt=""
-                                      className="h-5 w-5 rounded-full"
-                                    />
-                                    <p className="text-xs">
-                                      {follower.data().username}
-                                    </p>
-                                  </div>
-                                ))}
-                              </>
-                            ) : (
-                              <p className="text-sm font-semibold">
-                                No Followers
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex gap-x-1 items-center relative group">
-                          <p className="font-semibold">{userFollows.length}</p>
-                          <p className="text-sm">Follows</p>
-                          {/*Follows show modal */}
 
-                          <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
-                            {userFollows.length > 0 ? (
-                              <>
-                                {userFollows.map((follow) => (
-                                  <div
-                                    className="flex space-x-2 w-full cursor-pointer hover:scale-110"
-                                    key={follow.id}
-                                    onClick={() =>
-                                      router.push(`/${follow.data().username}`)
-                                    }
-                                  >
-                                    <img
-                                      src={follow.data().profileImg}
-                                      alt=""
-                                      className="h-5 w-5 rounded-full"
-                                    />
-                                    <p className="text-xs">
-                                      {follow.data().username}
-                                    </p>
-                                  </div>
-                                ))}
-                              </>
-                            ) : (
-                              <p className="text-sm font-semibold">
-                                No Follows
-                              </p>
-                            )}
-                          </div>
+                    <div className="gap-x-6 hidden md:flex">
+                      <div className="flex gap-x-1 items-center">
+                        <p className="font-semibold">{posts.length}</p>
+                        <p className="text-sm">Post</p>
+                      </div>
+                      <div className="flex gap-x-1 items-center relative group">
+                        <p className="font-semibold">{userFollowers.length}</p>
+                        <p className="text-sm">Follower</p>
+                        {/*Followers show modal */}
+                        <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                          {userFollowers.length > 0 ? (
+                            <>
+                              {userFollowers.map((follower) => (
+                                <div
+                                  className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                                  key={follower.id}
+                                  onClick={() =>
+                                    router.push(`/${follower.data().username}`)
+                                  }
+                                >
+                                  <img
+                                    src={follower.data().profileImg}
+                                    alt=""
+                                    className="h-5 w-5 rounded-full"
+                                  />
+                                  <p className="text-xs">
+                                    {follower.data().username}
+                                  </p>
+                                </div>
+                              ))}
+                            </>
+                          ) : (
+                            <p className="text-sm font-semibold">
+                              No Followers
+                            </p>
+                          )}
                         </div>
                       </div>
-                    )}
+                      <div className="flex gap-x-1 items-center relative group">
+                        <p className="font-semibold">{userFollows.length}</p>
+                        <p className="text-sm">Follows</p>
+                        {/*Follows show modal */}
+
+                        <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                          {userFollows.length > 0 ? (
+                            <>
+                              {userFollows.map((follow) => (
+                                <div
+                                  className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                                  key={follow.id}
+                                  onClick={() =>
+                                    router.push(`/${follow.data().username}`)
+                                  }
+                                >
+                                  <img
+                                    src={follow.data().profileImg}
+                                    alt=""
+                                    className="h-5 w-5 rounded-full"
+                                  />
+                                  <p className="text-xs">
+                                    {follow.data().username}
+                                  </p>
+                                </div>
+                              ))}
+                            </>
+                          ) : (
+                            <p className="text-sm font-semibold">No Follows</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
                     {/*Name section */}
                     <div className="hidden">
@@ -308,83 +292,78 @@ const Profile = () => {
                 </div>
 
                 {/*Follows-Follower number -- MOBILE */}
-                {followLoading ? (
-                  <div className="md:hidden flex items-center px-6 justify-around  border-y border-gray-300 w-full py-4">
-                    <FaSpinner size={30} className="animate-spin"></FaSpinner>
+
+                <div className="md:hidden flex items-center px-6 justify-around  border-y border-gray-300 w-full py-4">
+                  <div className="flex flex-col items-center">
+                    <p className="font-semibold text-sm">{posts.length}</p>
+                    <p className="text-sm text-gray-500">Post</p>
                   </div>
-                ) : (
-                  <div className="md:hidden flex items-center px-6 justify-around  border-y border-gray-300 w-full py-4">
-                    <div className="flex flex-col items-center">
-                      <p className="font-semibold text-sm">{posts.length}</p>
-                      <p className="text-sm text-gray-500">Post</p>
-                    </div>
-                    <div className="flex flex-col items-center relative group">
-                      <p className="font-semibold text-sm">
-                        {userFollowers.length}
-                      </p>
-                      <p className="text-sm text-gray-500">Follower</p>
-                      {/*Followers show modal */}
-                      <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
-                        {userFollowers.length > 0 ? (
-                          <>
-                            {userFollowers.map((follower) => (
-                              <div
-                                className="flex space-x-2 w-full cursor-pointer hover:scale-110"
-                                key={follower.id}
-                                onClick={() =>
-                                  router.push(`/${follower.data().username}`)
-                                }
-                              >
-                                <img
-                                  src={follower.data().profileImg}
-                                  alt=""
-                                  className="h-5 w-5 rounded-full"
-                                />
-                                <p className="text-xs">
-                                  {follower.data().username}
-                                </p>
-                              </div>
-                            ))}
-                          </>
-                        ) : (
-                          <p className="text-sm font-semibold">No Followers</p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center relative group">
-                      <p className="font-semibold text-sm">
-                        {userFollows.length}
-                      </p>
-                      <p className="text-sm text-gray-500">Follows</p>
-                      <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
-                        {userFollows.length > 0 ? (
-                          <>
-                            {userFollows.map((follow) => (
-                              <div
-                                className="flex space-x-2 w-full cursor-pointer hover:scale-110"
-                                key={follow.id}
-                                onClick={() =>
-                                  router.push(`/${follow.data().username}`)
-                                }
-                              >
-                                <img
-                                  src={follow.data().profileImg}
-                                  alt=""
-                                  className="h-5 w-5 rounded-full"
-                                />
-                                <p className="text-xs">
-                                  {follow.data().username}
-                                </p>
-                              </div>
-                            ))}
-                          </>
-                        ) : (
-                          <p className="text-sm font-semibold">No Follows</p>
-                        )}
-                      </div>
+                  <div className="flex flex-col items-center relative group">
+                    <p className="font-semibold text-sm">
+                      {userFollowers.length}
+                    </p>
+                    <p className="text-sm text-gray-500">Follower</p>
+                    {/*Followers show modal */}
+                    <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                      {userFollowers.length > 0 ? (
+                        <>
+                          {userFollowers.map((follower) => (
+                            <div
+                              className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                              key={follower.id}
+                              onClick={() =>
+                                router.push(`/${follower.data().username}`)
+                              }
+                            >
+                              <img
+                                src={follower.data().profileImg}
+                                alt=""
+                                className="h-5 w-5 rounded-full"
+                              />
+                              <p className="text-xs">
+                                {follower.data().username}
+                              </p>
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <p className="text-sm font-semibold">No Followers</p>
+                      )}
                     </div>
                   </div>
-                )}
+                  <div className="flex flex-col items-center relative group">
+                    <p className="font-semibold text-sm">
+                      {userFollows.length}
+                    </p>
+                    <p className="text-sm text-gray-500">Follows</p>
+                    <div className="bg-white p-4 shadow-lg rounded w-40 absolute top-6 hidden group-hover:flex flex-col z-50 space-y-2">
+                      {userFollows.length > 0 ? (
+                        <>
+                          {userFollows.map((follow) => (
+                            <div
+                              className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                              key={follow.id}
+                              onClick={() =>
+                                router.push(`/${follow.data().username}`)
+                              }
+                            >
+                              <img
+                                src={follow.data().profileImg}
+                                alt=""
+                                className="h-5 w-5 rounded-full"
+                              />
+                              <p className="text-xs">
+                                {follow.data().username}
+                              </p>
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <p className="text-sm font-semibold">No Follows</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/*Icons */}
                 <div className=" flex items-center px-6 justify-around md:justify-center py-3 border-b md:border-b-0 md:border-t border-gray-300 w-full text-gray-500 md:gap-x-4">
@@ -465,7 +444,7 @@ const Profile = () => {
                               <div className="flex items-center justify-center h-40 mx-auto">
                                 <div className="w-full flex flex-col items-center justify-center px-6">
                                   <h4 className="text-center mb-2 text-gray-500">
-                                    <b className="px-1 text-black">
+                                    <b className="px-1 text-black text-center">
                                       {user.username}
                                     </b>
                                     has no posts at the moment...
@@ -475,19 +454,25 @@ const Profile = () => {
                             )}
                           </div>
                         ) : (
-                          <div className="w-full h-40 flex items-center justify-center text-gray-500 text-center">
-                            You have to follow
-                            <b className="px-1 text-black">{user.username}</b>to
-                            see posts...
+                          <div className="w-full mt-10 flex flex-col items-center h-40">
+                            <AiOutlineLock
+                              size={124}
+                              className="text-gray-200"
+                            ></AiOutlineLock>
+                            <div className=" flex items-center justify-center text-gray-500 text-center">
+                              Follow
+                              <b className="px-1 text-black">{user.username}</b>
+                              to see posts...
+                            </div>
                           </div>
                         )}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="w-full h-40 flex flex-col items-center justify-center text-gray-500 gap-y-3">
+                  <div className="w-full h-40 flex flex-col items-center justify-center text-gray-500 gap-y-3 text-center">
                     <p>
-                      You have to be signed in to see
+                      Sign in to see
                       <b className="px-1 text-black">{user.username}</b>posts...
                     </p>
                     <button
@@ -507,6 +492,7 @@ const Profile = () => {
         </>
       ) : (
         <div className="w-full h-screen flex items-center justify-center">
+          {/*If user doesnt exist error message */}
           NO USER NAMED <p className="mx-1 uppercase font-bold">{profile}</p> IN
           DATABASE...
         </div>

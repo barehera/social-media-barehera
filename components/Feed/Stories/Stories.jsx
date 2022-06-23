@@ -18,7 +18,6 @@ const Stories = () => {
         })
         .catch((err) => console.log(err));
     };
-
     getRandomUser();
   }, []);
 
