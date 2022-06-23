@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { messagesSelectedUser } from "../../../atoms/messagesUsersAtom";
-import { BsTelephone, BsCameraVideo, BsInfoCircle } from "react-icons/bs";
-import { AiOutlineSend } from "react-icons/ai";
+import { BsInfoCircle } from "react-icons/bs";
+import { AiOutlineSend, AiOutlineClose } from "react-icons/ai";
 import { useSession } from "next-auth/react";
 import {
   collection,
@@ -20,7 +20,6 @@ import { FaSpinner } from "react-icons/fa";
 const DirectRightSide = () => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
   const [messages, setMessages] = useState([]);
-  const [messageSendLoading, setMessageSendLoading] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const { data: session } = useSession();
   const router = useRouter();
@@ -72,48 +71,54 @@ const DirectRightSide = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    setMessageSendLoading(true);
-    // Session User Create message
-    await addDoc(
-      collection(
-        db,
-        "users",
-        session?.user?.uid,
-        "messages",
-        selectedUser.id,
-        "messages"
-      ),
-      {
-        message: inputMessage,
-        owner: session?.user?.username,
-        read: false,
-        timestamp: serverTimestamp(),
-      }
-    );
-    await addDoc(
-      collection(
-        db,
-        "users",
-        selectedUser.id,
-        "messages",
-        session?.user?.uid,
-        "messages"
-      ),
-      {
-        message: inputMessage,
-        owner: session?.user?.username,
-        read: false,
-        timestamp: serverTimestamp(),
-      }
-    );
 
-    setInputMessage("");
-    setMessageSendLoading(false);
+    if (inputMessage.length > 0) {
+      // Session User Create message
+      setInputMessage("");
+      await addDoc(
+        collection(
+          db,
+          "users",
+          session?.user?.uid,
+          "messages",
+          selectedUser.id,
+          "messages"
+        ),
+        {
+          message: inputMessage,
+          owner: session?.user?.username,
+          read: false,
+          timestamp: serverTimestamp(),
+        }
+      );
+      await addDoc(
+        collection(
+          db,
+          "users",
+          selectedUser.id,
+          "messages",
+          session?.user?.uid,
+          "messages"
+        ),
+        {
+          message: inputMessage,
+          owner: session?.user?.username,
+          read: false,
+          timestamp: serverTimestamp(),
+        }
+      );
+    } else {
+      alert("Cannot send empty message");
+    }
   };
 
   return (
     <>
-      <div className="w-4/6">
+      <div
+        className={`${
+          selectedUser ? "block w-full" : "hidden"
+        }  md:block md:w-4/6`}
+      >
         {selectedUser ? (
           <div className="w-full h-full flex flex-col ">
             {/*Header */}
@@ -133,13 +138,14 @@ const DirectRightSide = () => {
                   </h3>
                 </div>
               </div>
-              <div className="flex gap-x-4">
-                <BsInfoCircle
-                  size={24}
+              {selectedUser && (
+                <div
                   className="cursor-pointer"
-                  onClick={() => alert("work on progress")}
-                ></BsInfoCircle>
-              </div>
+                  onClick={() => setSelectedUser(null)}
+                >
+                  <AiOutlineClose size={20}></AiOutlineClose>
+                </div>
+              )}
             </div>
             {/*Messages */}
             <div className="flex-1  py-2 px-6 flex flex-col gap-y-4 overflow-auto scrollbar-thin scrollbar-thumb-gray-200">
@@ -208,18 +214,11 @@ const DirectRightSide = () => {
                 onChange={(e) => setInputMessage(e.target.value)}
                 value={inputMessage}
               />
-              {messageSendLoading ? (
-                <FaSpinner
-                  size={24}
-                  className="animate-spin absolute right-8"
-                ></FaSpinner>
-              ) : (
-                <AiOutlineSend
-                  size={24}
-                  className="text-gray-500 absolute right-8 cursor-pointer"
-                  onClick={sendMessage}
-                ></AiOutlineSend>
-              )}
+              <AiOutlineSend
+                size={24}
+                className="text-gray-500 absolute right-8 cursor-pointer"
+                onClick={sendMessage}
+              ></AiOutlineSend>
             </form>
           </div>
         ) : (

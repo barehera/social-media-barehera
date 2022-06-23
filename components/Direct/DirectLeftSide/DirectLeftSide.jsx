@@ -4,11 +4,15 @@ import UserMessageCard from "./UserMessageCard/UserMessageCard";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useRecoilState } from "recoil";
-import { messagesUsers } from "../../../atoms/messagesUsersAtom";
+import {
+  messagesSelectedUser,
+  messagesUsers,
+} from "../../../atoms/messagesUsersAtom";
 import { useSession } from "next-auth/react";
 
 const DirectLeftSide = () => {
   const [users, setUsers] = useRecoilState(messagesUsers);
+  const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -29,7 +33,11 @@ const DirectLeftSide = () => {
     }
   }, [db, session]);
   return (
-    <div className="w-3/6 md:w-2/6 h-full border-r ">
+    <div
+      className={`${
+        selectedUser ? "hidden md:block" : "block"
+      } w-full md:w-2/6 h-full border-r `}
+    >
       {/*session username*/}
       <div className="h-16 flex items-center justify-center relative border-b">
         <h1 className="font-semibold text-sm">{session?.user?.username}</h1>
