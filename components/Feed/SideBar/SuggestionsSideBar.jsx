@@ -107,7 +107,7 @@ const SuggestionsSideBar = () => {
                 <div key={user.id} className="flex items-center space-x-4">
                   <img
                     src={user.profileImg}
-                    alt="user pic"
+                    alt=""
                     className="w-12 h-12 rounded-full border p-1 cursor-pointer"
                     onClick={() => router.push(`${user.username}`)}
                   />
