@@ -39,7 +39,7 @@ const Suggestions = () => {
             { ...doc.data(), id: doc.id },
           ]);
         });
-
+        setLoading(false);
         //Session user's Follows
         const unsubscribeFollows = onSnapshot(
           query(
@@ -52,7 +52,6 @@ const Suggestions = () => {
                 ...sessionUserFollowsId,
                 doc.id,
               ]);
-              setLoading(false);
             });
           }
         );

@@ -22,6 +22,7 @@ const Posts = () => {
     if (session) {
       const getPosts = async () => {
         setLoading(true);
+
         const unsubscribeFollowedUsers = onSnapshot(
           query(
             collection(db, "users", session.user.uid, "follows"),
@@ -50,6 +51,7 @@ const Posts = () => {
             });
           }
         );
+
         const unsubscribeSessionUserPosts = onSnapshot(
           query(
             collection(db, "users", session.user.uid, "posts"),
@@ -66,17 +68,21 @@ const Posts = () => {
         );
         return unsubscribeFollowedUsers, unsubscribeSessionUserPosts;
       };
-      setPosts([]);
+
       getPosts();
     }
   }, [db, session?.user?.uid]);
 
   useEffect(() => {
-    //posts sort
+    //Removes duplicate post when follows changed and sorts it
     setSortedPosts(
-      posts.sort(
-        (a, b) => b.timestamp.seconds * 1000 - a.timestamp.seconds * 1000
-      )
+      posts
+        .filter(
+          (ele, ind) => ind === posts.findIndex((elem) => elem.id === ele.id)
+        )
+        .sort(
+          (a, b) => b.timestamp?.seconds * 1000 - a.timestamp?.seconds * 1000
+        )
     );
   }, [posts]);
 

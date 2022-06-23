@@ -33,7 +33,7 @@ const SuggestionsSideBar = () => {
       querySnapshot.forEach((doc) => {
         setAllUsers((allUsers) => [...allUsers, { ...doc.data(), id: doc.id }]);
       });
-
+      setLoading(false);
       //Session user's Follows
       const unsubscribeFollows = onSnapshot(
         query(
@@ -46,7 +46,6 @@ const SuggestionsSideBar = () => {
               ...sessionUserFollowsId,
               doc.id,
             ]);
-            setLoading(false);
           });
         }
       );
@@ -78,8 +77,6 @@ const SuggestionsSideBar = () => {
       username: session.user.username,
       profileImg: session.user.image,
     });
-    //Reloading the page to fetch new followed users posts from firestore
-    Router.reload(window.location.pathname);
   };
 
   return (
