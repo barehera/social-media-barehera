@@ -1,13 +1,7 @@
 import React, { useEffect } from "react";
 import { BiMessageSquareEdit } from "react-icons/bi";
 import UserMessageCard from "./UserMessageCard/UserMessageCard";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useRecoilState } from "recoil";
 import {

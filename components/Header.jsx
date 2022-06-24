@@ -63,13 +63,12 @@ const Header = () => {
     <div className="shadow-sm border-b bg-white sticky top-0 z-30">
       <div className="flex justify-between max-w-5xl mx-auto p-1 md:py-1 items-center">
         {/*Left*/}
-
-        <h1
-          className="text-2xl tracking-tighter font-black font-serif py-1 cursor-pointer hover:scale-105 transition-all ease-out "
+        <img
           onClick={() => router.push("/")}
-        >
-          Barehera
-        </h1>
+          src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
+          alt=""
+          className="relative inline-grid h-12 w-24 cursor-pointer object-contain"
+        />
 
         {/*Middle - Search*/}
         <div className="max-w-xs  hidden md:flex">
