@@ -72,7 +72,7 @@ const DirectRightSide = () => {
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    if (inputMessage.length > 0) {
+    if (inputMessage.trim().length !== 0) {
       // Session User Create message
       setInputMessage("");
       await addDoc(
