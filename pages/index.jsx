@@ -17,7 +17,10 @@ export default function Home() {
       if (session) {
         const sessionUserRef = doc(db, "users", session.user.uid);
         const sessionUserDoc = await getDoc(sessionUserRef);
-        if (sessionUserDoc.data().username === session.user.username) {
+        if (
+          sessionUserDoc.data().username === session.user.username &&
+          sessionUserDoc.data().profileImg === session.user.image
+        ) {
           console.log("user exists");
         } else {
           await setDoc(doc(db, "users", `${session.user.uid}`), {

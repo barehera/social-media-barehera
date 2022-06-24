@@ -19,7 +19,8 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { db } from "../../../../firebase";
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "../../../../firebase";
 import Moment from "react-moment";
 import { useRouter } from "next/router";
 
@@ -102,7 +103,11 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
   const deletePost = async (userId, postId) => {
     if (session?.user?.uid === userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
-      router.reload(window.location.pathname);
+
+      const imageRef = ref(storage, `${username}/posts/${postId}/image`);
+      deleteObject(imageRef)
+        .then(router.reload(window.location.pathname))
+        .catch((err) => console.log(err));
     } else {
       alert("You are not user!!!!");
     }

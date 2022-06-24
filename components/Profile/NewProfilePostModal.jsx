@@ -24,7 +24,8 @@ import {
   profilePostModalAtom,
   profileUserPost,
 } from "../../atoms/profilePostModalAtom";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
+import { ref, deleteObject } from "firebase/storage";
 
 const NewProfilePostModal = () => {
   const cancelButtonRef = useRef(null);
@@ -177,9 +178,15 @@ const NewProfilePostModal = () => {
   //Deleting Post Function
 
   const deletePost = async (userId, postId) => {
-    if (session?.user?.uid === userPost.userId) {
+    if (session?.user?.uid === userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
-      router.reload(window.location.pathname);
+      const imageRef = ref(
+        storage,
+        `${session.user.username}/posts/${postId}/image`
+      );
+      deleteObject(imageRef)
+        .then(router.reload(window.location.pathname))
+        .catch((err) => console.log(err));
     } else {
       alert("You are not user!!!!");
     }
@@ -369,10 +376,13 @@ const NewProfilePostModal = () => {
               </Dialog.Panel>
             </Transition.Child>
             <div
-              className="absolute top-1 right-1  text-white cursor-pointer text-lg"
+              className="absolute top-2 right-2 lg:top-4 lg:right-4 text-white cursor-pointer text-lg"
               ref={cancelButtonRef}
             >
-              <AiOutlineClose onClick={() => setOpen(false)}></AiOutlineClose>
+              <AiOutlineClose
+                onClick={() => setOpen(false)}
+                size={20}
+              ></AiOutlineClose>
             </div>
           </div>
         </div>
