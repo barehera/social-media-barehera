@@ -3,7 +3,6 @@ import {
   BookmarkIcon,
   ChatIcon,
   DotsHorizontalIcon,
-  EmojiHappyIcon,
   HeartIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/outline";
@@ -148,7 +147,9 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
         )}
       </div>
       {/*İmage */}
+
       <img src={img} alt="Post image" className="object-cover w-full" />
+
       {/*Buttons */}
       {session && (
         <div className="flex justify-between py-4 pr-2">

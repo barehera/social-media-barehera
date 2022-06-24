@@ -20,8 +20,6 @@ import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import ProfilePost from "../components/Profile/ProfilePost";
-import { useRecoilState } from "recoil";
-import { profileUserPost } from "../atoms/profilePostModalAtom";
 import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
 
 const Profile = () => {
@@ -31,14 +29,11 @@ const Profile = () => {
   const { data: session } = useSession();
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [followLoading, setFollowLoading] = useState(false);
-  const [userPost] = useRecoilState(profileUserPost);
+  const [loading, setLoading] = useState(true);
   const [hasFollowed, setHasFollowed] = useState(false);
   const [follows, setFollows] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [userExists, setUserExists] = useState(true);
-
   const [userFollows, setUserFollows] = useState([]);
   const [userFollowers, setUserFollowers] = useState([]);
 
@@ -54,8 +49,8 @@ const Profile = () => {
         if (querySnapshot.docs.length > 0) {
           setUserExists(true);
           // Setting User
-          let user = querySnapshot?.docs[0].data();
-          let userId = querySnapshot?.docs[0].id;
+          const user = querySnapshot?.docs[0].data();
+          const userId = querySnapshot?.docs[0].id;
           setUser({ ...user, id: userId });
           // Setting User Follows and Followers
           //Follows
@@ -66,6 +61,7 @@ const Profile = () => {
             ),
             (snapshot) => {
               setUserFollows(snapshot.docs);
+              setLoading(false);
             }
           );
           //Followers
@@ -76,6 +72,7 @@ const Profile = () => {
             ),
             (snapshot) => {
               setUserFollowers(snapshot.docs);
+              setLoading(false);
             }
           );
           //If Followed Get Posts from firestore
@@ -91,7 +88,6 @@ const Profile = () => {
             }
           );
 
-          setLoading(false);
           return unsubscribeFollowers, unsubscribeFollows, unsubscribePosts;
         } else {
           setUserExists(false);
@@ -130,7 +126,6 @@ const Profile = () => {
 
   //Follow Unfollow Function
   const handleFollow = async () => {
-    setFollowLoading(true);
     if (hasFollowed) {
       //Deleting followed user and follower session user
       await deleteDoc(doc(db, "users", session.user.uid, "follows", user.id));
@@ -146,7 +141,6 @@ const Profile = () => {
         profileImg: session.user.image,
       });
     }
-    setFollowLoading(false);
   };
 
   //HasFollowed ? function
@@ -486,7 +480,6 @@ const Profile = () => {
               </div>
               <Modal></Modal>
               <NewProfilePostModal></NewProfilePostModal>
-              {/*userPost && <ProfilePostModal></ProfilePostModal>*/}
             </div>
           )}
         </>
