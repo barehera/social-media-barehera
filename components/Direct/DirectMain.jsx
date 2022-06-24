@@ -9,8 +9,6 @@ const DirectMain = () => {
         <DirectLeftSide></DirectLeftSide>
         <DirectRightSide></DirectRightSide>
       </div>
-      {/*Mobile direct */}
-      <div></div>
     </div>
   );
 };
