@@ -12,7 +12,7 @@ import {
   AiOutlineHome,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from "../firebase";
 
 const Header = () => {
@@ -50,15 +50,21 @@ const Header = () => {
 
   useEffect(() => {
     const getUsers = async () => {
-      setUsers([]);
-      const q = query(collection(db, "users"));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUsers((users) => [...users, { ...doc.data(), id: doc.id }]);
-      });
+      if (session) {
+        setUsers([]);
+        const q = query(
+          collection(db, "users"),
+          where("username", "!=", session.user.username)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(async (doc) => {
+          setUsers((users) => [...users, { ...doc.data(), id: doc.id }]);
+        });
+      }
     };
     getUsers();
-  }, []);
+  }, [session]);
+
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-30">
       <div className="flex justify-between max-w-5xl mx-auto p-1 md:py-1 items-center">
@@ -120,14 +126,17 @@ const Header = () => {
                 className="navButton xl:hidden"
                 onClick={() => router.push(`/suggestions`)}
               ></AiOutlineUsergroupAdd>
+
               <AiOutlineMessage
                 className="navButton"
                 onClick={() => router.push(`/direct`)}
               ></AiOutlineMessage>
+
               <AiOutlinePlusCircle
                 onClick={() => setOpen(true)}
                 className="navButton"
               ></AiOutlinePlusCircle>
+
               <AiOutlineLogout
                 className="navButton"
                 onClick={signOut}
