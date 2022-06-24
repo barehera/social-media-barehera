@@ -49,10 +49,10 @@ export default function Home() {
   return (
     <div className="bg-gray-100 min-h-screen ">
       <Head>
-        <title>Instagram</title>
+        <title>Barehera</title>
         <meta
           name="description"
-          content="barehera barehera.cf instagram-clone"
+          content="barehera barehera.cf Social Media App Barehera"
         />
       </Head>
       <Header></Header>
