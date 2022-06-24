@@ -264,9 +264,6 @@ const DirectRightSide = () => {
             <p className="text-sm text-center text-gray-500">
               Bir arkadaşına veya gruba gizli fotoğraflar ve mesajlar gönder.
             </p>
-            <button className="text-sm bg-blue-500 text-white px-2 py-1 rounded font-semibold mt-4">
-              Mesaj Gönder
-            </button>
           </div>
         )}
 
