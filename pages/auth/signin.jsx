@@ -8,11 +8,8 @@ const signIn = ({ providers }) => {
       <div className="flex flex-col gap-y-4 items-center justify-center bg-gray-100 min-h-screen w-screen px-4 ">
         {/*Main content card */}
         <div className="bg-white flex flex-col items-center text-center px-2 py-8 w-full border border-gray-300 max-w-md">
-          <img
-            src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png"
-            alt="logo"
-            className="my-6 cursor-pointer"
-          />
+          <h1 className="text-5xl font-serif tracking-tighter  ">Barehera</h1>
+          <p className="mb-6 text-sm text-gray-500">Social Media App...</p>
           <div className="flex flex-col gap-y-2 w-full px-6">
             <input
               type="text"

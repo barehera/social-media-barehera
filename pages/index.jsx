@@ -49,10 +49,10 @@ export default function Home() {
   return (
     <div className="bg-gray-100 min-h-screen ">
       <Head>
-        <title>Instagram</title>
+        <title>Barehera</title>
         <meta
           name="description"
-          content="barehera barehera.cf instagram-clone"
+          content="Barehera Social Media app created with next.js and firebase. link is barehera.cf"
         />
       </Head>
       <Header></Header>
