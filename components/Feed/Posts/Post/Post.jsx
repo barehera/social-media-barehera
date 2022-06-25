@@ -195,7 +195,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       {/*Caption */}
       <div className="p-5 flex gap-x-2 items-baseline">
         <span>
-          <b>{username}:</b> {caption}
+          <b>{username}</b> {caption}
         </span>
       </div>
       {/*coments */}
