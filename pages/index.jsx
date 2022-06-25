@@ -4,7 +4,7 @@ import Feed from "../components/Feed/Feed";
 import Modal from "../components/NewPostModal/Modal";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import { setDoc, doc, getDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import Router from "next/router";
 
@@ -15,27 +15,18 @@ export default function Home() {
     const addUserToDatabase = async () => {
       // CHECKED USER EXISTS NEED UPDATE!!!!!!!!!!!!!!!!!!!
       if (session) {
-        const sessionUserRef = doc(db, "users", session.user.uid);
-        const sessionUserDoc = await getDoc(sessionUserRef);
-        if (
-          sessionUserDoc.data().username === session.user.username &&
-          sessionUserDoc.data().profileImg === session.user.image
-        ) {
-          console.log("user exists");
-        } else {
-          await setDoc(doc(db, "users", `${session.user.uid}`), {
-            username: session.user.username,
-            profileImg: session.user.image,
-          });
-          await setDoc(
-            doc(db, "users", `${session.user.uid}`, "follows", "empty"),
-            { empty: null }
-          );
-          await setDoc(
-            doc(db, "users", `${session.user.uid}`, "followers", "empty"),
-            { empty: null }
-          );
-        }
+        await setDoc(doc(db, "users", `${session.user.uid}`), {
+          username: session.user.username,
+          profileImg: session.user.image,
+        });
+        await setDoc(
+          doc(db, "users", `${session.user.uid}`, "follows", "empty"),
+          { empty: null }
+        );
+        await setDoc(
+          doc(db, "users", `${session.user.uid}`, "followers", "empty"),
+          { empty: null }
+        );
       }
     };
     addUserToDatabase();
