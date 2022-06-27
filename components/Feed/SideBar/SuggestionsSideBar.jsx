@@ -69,12 +69,12 @@ const SuggestionsSideBar = () => {
   const handleFollow = async (id, username, photoURL) => {
     //Setting followed user and follower session user
     await setDoc(doc(db, "users", user.uid, "follows", id), {
+      userId: id,
       username: username,
-      photoURL: photoURL,
     });
     await setDoc(doc(db, "users", id, "followers", user.uid), {
+      userId: user.uid,
       username: user.username,
-      photoURL: user.photoURL,
     });
   };
 

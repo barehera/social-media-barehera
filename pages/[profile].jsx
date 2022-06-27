@@ -14,12 +14,14 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import ProfilePost from "../components/Profile/ProfilePost";
 import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
 import { useAuth } from "../context/AuthContext";
+import FollowFollowerUser from "../components/Profile/FollowFollowerUser/FollowFollowerUser";
 
 const Profile = () => {
   //Router
@@ -133,12 +135,12 @@ const Profile = () => {
     } else {
       //Setting followed user and follower session user
       await setDoc(doc(db, "users", user.uid, "follows", profileUser.id), {
+        userId: profileUser.id,
         username: profileUser.username,
-        photoURL: profileUser.photoURL,
       });
       await setDoc(doc(db, "users", profileUser.id, "followers", user.uid), {
+        userId: user.uid,
         username: user.username,
-        photoURL: user.photoURL,
       });
     }
   };
@@ -222,22 +224,10 @@ const Profile = () => {
                           {userFollowers.length > 0 ? (
                             <>
                               {userFollowers.map((follower) => (
-                                <div
-                                  className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                                <FollowFollowerUser
                                   key={follower.id}
-                                  onClick={() =>
-                                    router.push(`/${follower.data().username}`)
-                                  }
-                                >
-                                  <img
-                                    src={follower.data().photoURL}
-                                    alt=""
-                                    className="h-5 w-5 rounded-full object-cover"
-                                  />
-                                  <p className="text-xs">
-                                    {follower.data().username}
-                                  </p>
-                                </div>
+                                  follower={follower}
+                                ></FollowFollowerUser>
                               ))}
                             </>
                           ) : (
@@ -256,22 +246,10 @@ const Profile = () => {
                           {userFollows.length > 0 ? (
                             <>
                               {userFollows.map((follow) => (
-                                <div
-                                  className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                                <FollowFollowerUser
                                   key={follow.id}
-                                  onClick={() =>
-                                    router.push(`/${follow.data().username}`)
-                                  }
-                                >
-                                  <img
-                                    src={follow.data().photoURL}
-                                    alt=""
-                                    className="h-5 w-5 rounded-full object-cover"
-                                  />
-                                  <p className="text-xs">
-                                    {follow.data().username}
-                                  </p>
-                                </div>
+                                  follower={follow}
+                                ></FollowFollowerUser>
                               ))}
                             </>
                           ) : (
@@ -305,22 +283,10 @@ const Profile = () => {
                       {userFollowers.length > 0 ? (
                         <>
                           {userFollowers.map((follower) => (
-                            <div
-                              className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                            <FollowFollowerUser
                               key={follower.id}
-                              onClick={() =>
-                                router.push(`/${follower.data().username}`)
-                              }
-                            >
-                              <img
-                                src={follower.data().photoURL}
-                                alt=""
-                                className="h-5 w-5 rounded-full object-cover"
-                              />
-                              <p className="text-xs">
-                                {follower.data().username}
-                              </p>
-                            </div>
+                              follower={follower}
+                            ></FollowFollowerUser>
                           ))}
                         </>
                       ) : (
@@ -337,22 +303,10 @@ const Profile = () => {
                       {userFollows.length > 0 ? (
                         <>
                           {userFollows.map((follow) => (
-                            <div
-                              className="flex space-x-2 w-full cursor-pointer hover:scale-110"
+                            <FollowFollowerUser
                               key={follow.id}
-                              onClick={() =>
-                                router.push(`/${follow.data().username}`)
-                              }
-                            >
-                              <img
-                                src={follow.data().photoURL}
-                                alt=""
-                                className="h-5 w-5 rounded-full object-cover"
-                              />
-                              <p className="text-xs">
-                                {follow.data().username}
-                              </p>
-                            </div>
+                              follower={follow}
+                            ></FollowFollowerUser>
                           ))}
                         </>
                       ) : (

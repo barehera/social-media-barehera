@@ -26,7 +26,7 @@ import Moment from "react-moment";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../context/AuthContext";
 
-const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
+const Post = ({ userId, postId, img, caption, time }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [comment, setComment] = useState("");
@@ -34,21 +34,47 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
   const date = new Date(time?.seconds * 1000);
 
-  //Posts
+  //Getting post owners username and profile photo
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(
-        collection(db, "users", userId, "posts", postId, "comments"),
-        orderBy("timestamp", "desc")
-      ),
-      (snapshot) => {
-        setComments(snapshot.docs);
-      }
-    );
+    const unsub = onSnapshot(doc(db, "users", userId), (doc) => {
+      setUserInfo(doc.data());
+    });
+    return unsub;
+  }, []);
 
-    return unsubscribe;
+  //Comments
+  useEffect(() => {
+    if (userId) {
+      const unsubscribe = onSnapshot(
+        query(
+          collection(db, "users", userId, "posts", postId, "comments"),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => {
+          setComments([]);
+          snapshot.docs.forEach(async (snap) => {
+            const userInfoDoc = await getDoc(
+              doc(db, "users", snap.data().userId)
+            );
+
+            setComments((comments) => [
+              ...comments,
+              {
+                photoURL: userInfoDoc.data().photoURL,
+                username: userInfoDoc.data().username,
+                ...snap.data(),
+                id: snap.id,
+              },
+            ]);
+          });
+        }
+      );
+
+      return unsubscribe;
+    }
   }, [db, userId, postId]);
 
   //Likes
@@ -93,8 +119,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
 
     await addDoc(collection(db, "users", userId, "posts", postId, "comments"), {
       comment: commentToSend,
-      username: user.username,
-      userImage: user.photoURL,
+      userId: user.uid,
       timestamp: serverTimestamp(),
     });
   };
@@ -107,7 +132,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       const imageRef = ref(storage, `${username}/posts/${postId}/image`);
       deleteObject(imageRef)
         .then(router.reload(window.location.pathname))
-        .catch((err) => console.log(err));
+        .catch((err) => alert(err));
     } else {
       alert("You are not user!!!!");
     }
@@ -119,16 +144,16 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       <div className="flex items-center justify-between p-4">
         <div className="flex-1 flex items-center">
           <img
-            src={userImg}
+            src={userInfo.photoURL}
             alt=""
             className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
-            onClick={() => router.push(`${username}`)}
+            onClick={() => router.push(`${userInfo.username}`)}
           />
           <p
             className="font-bold cursor-pointer"
-            onClick={() => router.push(`${username}`)}
+            onClick={() => router.push(`${userInfo.username}`)}
           >
-            {username}
+            {userInfo.username}
           </p>
         </div>
 
@@ -195,7 +220,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
       {/*Caption */}
       <div className="p-5 flex gap-x-2 items-baseline">
         <span>
-          <b>{username}</b> {caption}
+          <b>{userInfo.username}</b> {caption}
         </span>
       </div>
       {/*coments */}
@@ -204,13 +229,13 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
           {comments.map((comment) => (
             <div key={comment.id} className="flex items-start space-x-2 mb-3">
               <img
-                src={comment.data().userImage}
+                src={comment.photoURL}
                 alt=""
                 className="h-7 w-7 rounded-full"
               />
               <div className="text-sm flex-1 flex items-baseline  space-x-2">
                 <h6>
-                  <b>{comment.data().username}</b> {comment.data().comment}
+                  <b>{comment.username}</b> {comment.comment}
                 </h6>
               </div>
 
@@ -219,7 +244,7 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
                 className="pr-5 text-xs text-gray-500"
                 fromNow
               >
-                {comment.data().timestamp?.toDate()}
+                {comment.timestamp?.toDate()}
               </Moment>
             </div>
           ))}
