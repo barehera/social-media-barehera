@@ -11,12 +11,12 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Router from "next/router";
+import { useAuth } from "../../context/AuthContext";
 
 const Modal = () => {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [open, setOpen] = useRecoilState(modalState);
   const filePickerRef = useRef(null);
   const captionRef = useRef(null);
@@ -33,32 +33,23 @@ const Modal = () => {
     // 3-) Upload the image to firebase storage with the post ID
     // 4-) get a download URL from fb storage and update the original post with image
 
-    const docRef = await addDoc(
-      collection(db, "users", session.user.uid, "posts"),
-      {
-        username: session.user.username,
-        caption: captionRef.current.value,
-        profileImg: session.user.image,
-        timestamp: serverTimestamp(),
-        userId: session.user.uid,
-      }
-    );
+    const docRef = await addDoc(collection(db, "users", user.uid, "posts"), {
+      username: user.username,
+      caption: captionRef.current.value,
+      photoURL: user.photoURL,
+      timestamp: serverTimestamp(),
+      userId: user.uid,
+    });
 
-    const imageRef = ref(
-      storage,
-      `${session.user.username}/posts/${docRef.id}/image`
-    );
+    const imageRef = ref(storage, `${user.username}/posts/${docRef.id}/image`);
 
     await uploadString(imageRef, selectedFile, "data_url").then(
       async (snapshot) => {
         const downloadURL = await getDownloadURL(imageRef);
 
-        await updateDoc(
-          doc(db, "users", session.user.uid, "posts", docRef.id),
-          {
-            image: downloadURL,
-          }
-        );
+        await updateDoc(doc(db, "users", user.uid, "posts", docRef.id), {
+          image: downloadURL,
+        });
       }
     );
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Header from "../components/Header";
 import { IoMdGrid } from "react-icons/io";
 import { AiOutlineFlag, AiOutlineLock } from "react-icons/ai";
 import { HiOutlineUserGroup } from "react-icons/hi";
@@ -18,16 +17,17 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
-import { useSession } from "next-auth/react";
 import ProfilePost from "../components/Profile/ProfilePost";
 import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
+import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
   //Router
   const router = useRouter();
   const profile = router.query.profile;
-  const { data: session } = useSession();
-  const [user, setUser] = useState({});
+
+  const { user } = useAuth();
+  const [profileUser, setProfileUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasFollowed, setHasFollowed] = useState(false);
@@ -38,7 +38,7 @@ const Profile = () => {
   const [userFollowers, setUserFollowers] = useState([]);
 
   useEffect(() => {
-    // getting user from firestore
+    // getting profileUser from firestore
     const getUser = async () => {
       if (profile) {
         const q = query(
@@ -48,15 +48,15 @@ const Profile = () => {
         const querySnapshot = await getDocs(q);
         if (querySnapshot.docs.length > 0) {
           setUserExists(true);
-          // Setting User
-          const user = querySnapshot?.docs[0].data();
-          const userId = querySnapshot?.docs[0].id;
-          setUser({ ...user, id: userId });
-          // Setting User Follows and Followers
+          // Setting profileUser
+          const profileUser = querySnapshot?.docs[0].data();
+          const profileUserId = querySnapshot?.docs[0].id;
+          setProfileUser({ ...profileUser, id: profileUserId });
+          // Setting profileUser Follows and Followers
           //Follows
           const unsubscribeFollows = onSnapshot(
             query(
-              collection(db, "users", userId, "follows"),
+              collection(db, "users", profileUserId, "follows"),
               where("username", "!=", null)
             ),
             (snapshot) => {
@@ -67,7 +67,7 @@ const Profile = () => {
           //Followers
           const unsubscribeFollowers = onSnapshot(
             query(
-              collection(db, "users", userId, "followers"),
+              collection(db, "users", profileUserId, "followers"),
               where("username", "!=", null)
             ),
             (snapshot) => {
@@ -79,7 +79,7 @@ const Profile = () => {
 
           const unsubscribePosts = onSnapshot(
             query(
-              collection(db, "users", userId, "posts"),
+              collection(db, "users", profileUserId, "posts"),
               orderBy("timestamp", "desc")
             ),
             (snapshot) => {
@@ -96,57 +96,59 @@ const Profile = () => {
     };
     setLoading(true);
     getUser();
-  }, [profile, hasFollowed, session?.user?.uid]);
+  }, [profile, hasFollowed, user]);
 
   //Getting Follows from firestore -- session user
   useEffect(() => {
-    if (session) {
+    if (user) {
       const unsubscribe = onSnapshot(
-        collection(db, "users", session.user.uid, "follows"),
+        collection(db, "users", user.uid, "follows"),
         (snapshot) => {
           setFollows(snapshot.docs);
         }
       );
       return unsubscribe;
     }
-  }, [db, session?.user?.uid]);
+  }, [db, user]);
 
   //Getting Followers from firestore -- session user
   useEffect(() => {
-    if (session) {
+    if (user) {
       const unsubscribe = onSnapshot(
-        collection(db, "users", session.user.uid, "followers"),
+        collection(db, "users", user.uid, "followers"),
         (snapshot) => {
           setFollowers(snapshot.docs);
         }
       );
       return unsubscribe;
     }
-  }, [db, session?.user?.uid]);
+  }, [db, user]);
 
   //Follow Unfollow Function
   const handleFollow = async () => {
     if (hasFollowed) {
       //Deleting followed user and follower session user
-      await deleteDoc(doc(db, "users", session.user.uid, "follows", user.id));
-      await deleteDoc(doc(db, "users", user.id, "followers", session.user.uid));
+      await deleteDoc(doc(db, "users", user.uid, "follows", profileUser.id));
+      await deleteDoc(doc(db, "users", profileUser.id, "followers", user.uid));
     } else {
       //Setting followed user and follower session user
-      await setDoc(doc(db, "users", session.user.uid, "follows", user.id), {
-        username: user.username,
-        profileImg: user.profileImg,
+      await setDoc(doc(db, "users", user.uid, "follows", profileUser.id), {
+        username: profileUser.username,
+        photoURL: profileUser.photoURL,
       });
-      await setDoc(doc(db, "users", user.id, "followers", session.user.uid), {
-        username: session.user.username,
-        profileImg: session.user.image,
+      await setDoc(doc(db, "users", profileUser.id, "followers", user.uid), {
+        username: user.username,
+        photoURL: user.photoURL,
       });
     }
   };
 
   //HasFollowed ? function
   useEffect(() => {
-    setHasFollowed(follows.findIndex((follow) => follow.id === user.id) !== -1);
-  }, [follows, session?.user?.uid, user]);
+    setHasFollowed(
+      follows.findIndex((follow) => follow.id === profileUser.id) !== -1
+    );
+  }, [follows, user, profileUser]);
 
   return (
     <>
@@ -158,20 +160,21 @@ const Profile = () => {
             </div>
           ) : (
             <div className="relative">
-              <Header></Header>
               <div className="md:max-w-5xl mx-auto flex flex-col">
                 {/*Profile image and info */}
                 <div className="flex items-center gap-x-12 w-full p-4 ">
                   <img
-                    src={user?.profileImg}
+                    src={profileUser?.photoURL}
                     alt=""
-                    className="w-20 h-20 rounded-full"
+                    className="w-20 h-20 rounded-full object-cover"
                   />
                   <div className="flex flex-col gap-y-6 flex-1">
                     {/*username and edit profile button */}
                     <div className="flex flex-col md:flex-row items-start gap-x-4 md:items-center gap-y-2">
-                      <h4 className="text-lg font-light">{user?.username}</h4>
-                      {session?.user?.username == user.username && (
+                      <h4 className="text-lg font-light">
+                        {profileUser?.username}
+                      </h4>
+                      {user.username == profileUser.username && (
                         <button
                           className="text-sm border rounded-sm border-gray-300 py-1 px-4 font-semibold md:w-36 "
                           onClick={() => alert("work in progress!")}
@@ -179,9 +182,9 @@ const Profile = () => {
                           Edit Profile
                         </button>
                       )}
-                      {session && (
+                      {user && (
                         <>
-                          {session?.user?.username !== profile && (
+                          {user?.username !== profile && (
                             <div>
                               {!hasFollowed ? (
                                 <button
@@ -227,9 +230,9 @@ const Profile = () => {
                                   }
                                 >
                                   <img
-                                    src={follower.data().profileImg}
+                                    src={follower.data().photoURL}
                                     alt=""
-                                    className="h-5 w-5 rounded-full"
+                                    className="h-5 w-5 rounded-full object-cover"
                                   />
                                   <p className="text-xs">
                                     {follower.data().username}
@@ -261,9 +264,9 @@ const Profile = () => {
                                   }
                                 >
                                   <img
-                                    src={follow.data().profileImg}
+                                    src={follow.data().photoURL}
                                     alt=""
-                                    className="h-5 w-5 rounded-full"
+                                    className="h-5 w-5 rounded-full object-cover"
                                   />
                                   <p className="text-xs">
                                     {follow.data().username}
@@ -310,9 +313,9 @@ const Profile = () => {
                               }
                             >
                               <img
-                                src={follower.data().profileImg}
+                                src={follower.data().photoURL}
                                 alt=""
-                                className="h-5 w-5 rounded-full"
+                                className="h-5 w-5 rounded-full object-cover"
                               />
                               <p className="text-xs">
                                 {follower.data().username}
@@ -342,9 +345,9 @@ const Profile = () => {
                               }
                             >
                               <img
-                                src={follow.data().profileImg}
+                                src={follow.data().photoURL}
                                 alt=""
-                                className="h-5 w-5 rounded-full"
+                                className="h-5 w-5 rounded-full object-cover"
                               />
                               <p className="text-xs">
                                 {follow.data().username}
@@ -381,9 +384,9 @@ const Profile = () => {
                   </div>
                 </div>
                 {/*Posts*/}
-                {session ? (
+                {user ? (
                   <div>
-                    {session?.user?.uid === user.id ? (
+                    {user?.uid === profileUser.id ? (
                       <div>
                         {posts.length > 0 ? (
                           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
@@ -439,7 +442,7 @@ const Profile = () => {
                                 <div className="w-full flex flex-col items-center justify-center px-6">
                                   <h4 className="text-center mb-2 text-gray-500">
                                     <b className="px-1 text-black text-center">
-                                      {user.username}
+                                      {profileUser.username}
                                     </b>
                                     has no posts at the moment...
                                   </h4>
@@ -455,7 +458,9 @@ const Profile = () => {
                             ></AiOutlineLock>
                             <div className=" flex items-center justify-center text-gray-500 text-center">
                               Follow
-                              <b className="px-1 text-black">{user.username}</b>
+                              <b className="px-1 text-black">
+                                {profileUser.username}
+                              </b>
                               to see posts...
                             </div>
                           </div>
@@ -466,14 +471,15 @@ const Profile = () => {
                 ) : (
                   <div className="w-full h-40 flex flex-col items-center justify-center text-gray-500 gap-y-3 text-center">
                     <p>
-                      Sign in to see
-                      <b className="px-1 text-black">{user.username}</b>posts...
+                      Login to see
+                      <b className="px-1 text-black">{profileUser.username}</b>
+                      posts...
                     </p>
                     <button
                       className="p-2 bg-blue-500 text-white rounded-sm w-24"
-                      onClick={() => router.push("/auth/signin")}
+                      onClick={() => router.push("/login")}
                     >
-                      Sign In
+                      Login
                     </button>
                   </div>
                 )}

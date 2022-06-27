@@ -1,17 +1,27 @@
 import "../styles/globals.css";
-import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
+import Header from "../components/Header";
+import ProtectedRoute from "../components/ProtectedRoute";
+import { useRouter } from "next/router";
+import { AuthContextProvider } from "../context/AuthContext";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+const noAuthRequired = ["/login", "/signup"];
+
+function MyApp({ Component, pageProps }) {
+  const router = useRouter();
   return (
-    <SessionProvider
-      options={{ site: process.env.NEXTAUTH_URL }}
-      session={session}
-    >
+    <AuthContextProvider>
       <RecoilRoot>
-        <Component {...pageProps} />
+        {noAuthRequired.includes(router.pathname) ? (
+          <Component {...pageProps} />
+        ) : (
+          <ProtectedRoute>
+            <Header></Header>
+            <Component {...pageProps} />
+          </ProtectedRoute>
+        )}
       </RecoilRoot>
-    </SessionProvider>
+    </AuthContextProvider>
   );
 }
 

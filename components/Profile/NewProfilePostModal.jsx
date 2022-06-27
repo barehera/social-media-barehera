@@ -12,7 +12,6 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { AiOutlineClose, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
@@ -26,6 +25,7 @@ import {
 } from "../../atoms/profilePostModalAtom";
 import { db, storage } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
+import { useAuth } from "../../context/AuthContext";
 
 const NewProfilePostModal = () => {
   const cancelButtonRef = useRef(null);
@@ -40,7 +40,7 @@ const NewProfilePostModal = () => {
   const [comment, setComment] = useState("");
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const { data: session } = useSession();
+  const { user } = useAuth();
 
   //getting user posts from firestore
   useEffect(() => {
@@ -108,9 +108,7 @@ const NewProfilePostModal = () => {
   }, [db, userPost]);
 
   useEffect(() => {
-    setHasLiked(
-      likes.findIndex((like) => like.id === session?.user?.uid) !== -1
-    );
+    setHasLiked(likes.findIndex((like) => like.id === user?.uid) !== -1);
   }, [likes]);
 
   const sendComment = async (e) => {
@@ -130,8 +128,8 @@ const NewProfilePostModal = () => {
         ),
         {
           comment: commentToSend,
-          username: session.user.username,
-          userImage: session.user.image,
+          username: user.username,
+          userImage: user.photoURL,
           timestamp: serverTimestamp(),
         }
       );
@@ -140,7 +138,7 @@ const NewProfilePostModal = () => {
 
   //Post liking function
   const likePost = async () => {
-    if (session) {
+    if (user) {
       if (hasLiked) {
         await deleteDoc(
           doc(
@@ -150,7 +148,7 @@ const NewProfilePostModal = () => {
             "posts",
             userPost.postId,
             "likes",
-            session.user.uid
+            user.uid
           )
         );
       } else {
@@ -162,28 +160,22 @@ const NewProfilePostModal = () => {
             "posts",
             userPost.postId,
             "likes",
-            session.user.uid
+            user.uid
           ),
           {
-            username: session?.user.username,
+            username: user?.username,
           }
         );
       }
-    } else {
-      alert("Giriş Yapınız!");
-      router.push("/auth/signin");
     }
   };
 
   //Deleting Post Function
 
   const deletePost = async (userId, postId) => {
-    if (session?.user?.uid === userId) {
+    if (user?.uid === userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
-      const imageRef = ref(
-        storage,
-        `${session.user.username}/posts/${postId}/image`
-      );
+      const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
       deleteObject(imageRef)
         .then(router.reload(window.location.pathname))
         .catch((err) => console.log(err));
@@ -248,13 +240,13 @@ const NewProfilePostModal = () => {
                     <div className="flex p-4 justify-between items-center lg:border-none">
                       <div className="flex items-center space-x-4 ">
                         <img
-                          src={post.profileImg}
+                          src={post.photoURL}
                           alt=""
-                          className="w-10 h-10 rounded-full"
+                          className="w-10 h-10 rounded-full object-cover"
                         />
                         <p className="text-sm font-semibold">{post.username}</p>
                       </div>
-                      {session?.user?.uid === userPost.userId && (
+                      {user?.uid === userPost.userId && (
                         <div className="relative flex items-center">
                           {deleteModalOpen && (
                             <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
@@ -351,7 +343,7 @@ const NewProfilePostModal = () => {
 
                     {/*input box */}
                     <div>
-                      {session && (
+                      {user && (
                         <form className="flex items-center p-2">
                           <input
                             type="text"

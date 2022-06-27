@@ -1,6 +1,6 @@
 import Image from "next/image";
-import React, { useEffect, useState, useRef } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { modalState } from "../atoms/modalAtom";
@@ -14,9 +14,10 @@ import {
 } from "react-icons/ai";
 import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { user, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const router = useRouter();
@@ -50,11 +51,11 @@ const Header = () => {
 
   useEffect(() => {
     const getUsers = async () => {
-      if (session) {
+      if (user) {
         setUsers([]);
         const q = query(
           collection(db, "users"),
-          where("username", "!=", session.user.username)
+          where("username", "!=", user.username)
         );
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach(async (doc) => {
@@ -63,17 +64,17 @@ const Header = () => {
       }
     };
     getUsers();
-  }, [session]);
+  }, [user]);
 
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-30">
       <div className="flex justify-between max-w-5xl mx-auto p-1 md:py-1 items-center">
         {/*Left*/}
         <h1
-          className="text-3xl font-serif tracking-tighter cursor-pointer"
+          className="text-3xl font-serif tracking-tighter cursor-pointer px-2"
           onClick={() => router.push("/")}
         >
-          Barehera
+          barehera.
         </h1>
 
         {/*Middle - Search*/}
@@ -99,9 +100,9 @@ const Header = () => {
                   onClick={() => router.push(`/${user.username}`)}
                 >
                   <img
-                    src={user.profileImg}
+                    src={user.photoURL}
                     alt=""
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <p>{user.username}</p>
                 </div>
@@ -120,7 +121,7 @@ const Header = () => {
             className="navButton"
           ></AiOutlineHome>
 
-          {session ? (
+          {user ? (
             <>
               <AiOutlineUsergroupAdd
                 className="navButton xl:hidden"
@@ -139,18 +140,18 @@ const Header = () => {
 
               <AiOutlineLogout
                 className="navButton"
-                onClick={signOut}
+                onClick={logout}
               ></AiOutlineLogout>
 
               <img
-                onClick={() => router.push(`/${session.user.username}`)}
-                src={session.user.image}
+                onClick={() => router.push(`/${user.username}`)}
+                src={user.photoURL}
                 alt=""
                 className="h-10 w-10 object-cover rounded-full cursor-pointer"
               />
             </>
           ) : (
-            <button onClick={signIn}>Sign In</button>
+            <button onClick={() => router.push("/login")}>Login</button>
           )}
         </div>
       </div>

@@ -10,7 +10,6 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { AiOutlineClose, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
@@ -23,6 +22,7 @@ import {
   profilePostModalAtom,
   profileUserPost,
 } from "../../atoms/profilePostModalAtom";
+import { useAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 
 const ProfilePostModal = () => {
@@ -36,7 +36,7 @@ const ProfilePostModal = () => {
   const [comment, setComment] = useState("");
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const { data: session } = useSession();
+  const { user } = useAuth();
 
   //getting user posts from firestore
   useEffect(() => {
@@ -105,9 +105,7 @@ const ProfilePostModal = () => {
   }, [db, userPost.postId]);
 
   useEffect(() => {
-    setHasLiked(
-      likes.findIndex((like) => like.id === session?.user?.uid) !== -1
-    );
+    setHasLiked(likes.findIndex((like) => like.id === user?.uid) !== -1);
   }, [likes]);
 
   const sendComment = async (e) => {
@@ -127,8 +125,8 @@ const ProfilePostModal = () => {
         ),
         {
           comment: commentToSend,
-          username: session.user.username,
-          userImage: session.user.image,
+          username: user.username,
+          userImage: user.photoURL,
           timestamp: serverTimestamp(),
         }
       );
@@ -137,7 +135,7 @@ const ProfilePostModal = () => {
 
   //Post liking function
   const likePost = async () => {
-    if (session) {
+    if (user) {
       if (hasLiked) {
         await deleteDoc(
           doc(
@@ -147,7 +145,7 @@ const ProfilePostModal = () => {
             "posts",
             userPost.postId,
             "likes",
-            session.user.uid
+            user.uid
           )
         );
       } else {
@@ -159,23 +157,20 @@ const ProfilePostModal = () => {
             "posts",
             userPost.postId,
             "likes",
-            session.user.uid
+            user.uid
           ),
           {
-            username: session?.user.username,
+            username: user?.username,
           }
         );
       }
-    } else {
-      alert("Giriş Yapınız!");
-      router.push("/auth/signin");
     }
   };
 
   //Deleting Post Function
 
   const deletePost = async (userId, postId) => {
-    if (session?.user?.uid === userPost.userId) {
+    if (user?.uid === userPost.userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
       router.reload(window.location.pathname);
     } else {
@@ -201,13 +196,13 @@ const ProfilePostModal = () => {
               <div className="flex p-4 justify-between items-center lg:border-none">
                 <div className="flex items-center space-x-4 ">
                   <img
-                    src={post.profileImg}
+                    src={post.photoURL}
                     alt="user photo"
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <p className="text-sm font-semibold">{post.username}</p>
                 </div>
-                {session?.user?.uid === userPost.userId && (
+                {user?.uid === userPost.userId && (
                   <div className="relative flex items-center">
                     {deleteModalOpen && (
                       <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
@@ -301,7 +296,7 @@ const ProfilePostModal = () => {
 
               {/*input box */}
               <div>
-                {session && (
+                {user && (
                   <form className="flex items-center p-4">
                     <TbMoodHappy className="postButton" size={24}></TbMoodHappy>
                     <input

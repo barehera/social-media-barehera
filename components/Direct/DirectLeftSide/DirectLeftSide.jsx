@@ -8,21 +8,18 @@ import {
   messagesSelectedUser,
   messagesUsers,
 } from "../../../atoms/messagesUsersAtom";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../../context/AuthContext";
 
 const DirectLeftSide = () => {
   const [users, setUsers] = useRecoilState(messagesUsers);
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
-  const { data: session } = useSession();
+  const { user } = useAuth();
 
   useEffect(() => {
     setUsers([]);
-    if (session) {
+    if (user) {
       const unsub = onSnapshot(
-        query(
-          collection(db, "users"),
-          where("username", "!=", session?.user?.username)
-        ),
+        query(collection(db, "users"), where("username", "!=", user.username)),
         (snapshot) => {
           snapshot.docs.forEach((doc) =>
             setUsers((users) => [...users, { ...doc.data(), id: doc.id }])
@@ -31,7 +28,7 @@ const DirectLeftSide = () => {
       );
       return unsub;
     }
-  }, [db, session]);
+  }, [db, user]);
   return (
     <div
       className={`${
@@ -40,13 +37,22 @@ const DirectLeftSide = () => {
     >
       {/*session username*/}
       <div className="h-16 flex items-center justify-center relative border-b">
-        <h1 className="font-semibold text-sm">{session?.user?.username}</h1>
+        <h1 className="font-semibold text-sm">{user.username}</h1>
       </div>
       {/*session users messages */}
       <div className="py-3 overflow-auto max-h-[calc(100%_-_61px)] scrollbar-thin scrollbar-thumb-gray-200">
-        {users?.map((user) => (
-          <UserMessageCard key={user.id} user={user}></UserMessageCard>
-        ))}
+        {users.length > 0 ? (
+          <>
+            {users?.map((messageUser) => (
+              <UserMessageCard
+                key={messageUser.id}
+                messageUser={messageUser}
+              ></UserMessageCard>
+            ))}
+          </>
+        ) : (
+          <p className="text-center">No one to chat</p>
+        )}
       </div>
     </div>
   );

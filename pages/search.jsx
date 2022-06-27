@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
 import { AiOutlineSearch } from "react-icons/ai";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
@@ -51,7 +50,6 @@ const Search = () => {
 
   return (
     <div>
-      <Header></Header>
       <div className="flex items-center justify-center mt-10 ">
         <div className="flex flex-col items-center justify-center w-full mx-4">
           <div className="relative block ">
@@ -76,9 +74,9 @@ const Search = () => {
                   onClick={() => router.push(`/${user.username}`)}
                 >
                   <img
-                    src={user.profileImg}
+                    src={user.photoURL}
                     alt=""
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full object-cover"
                   />
                   <p>{user.username}</p>
                 </div>

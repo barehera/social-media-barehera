@@ -9,25 +9,27 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../../firebase";
 import Post from "../Posts/Post/Post";
 import { FaSpinner } from "react-icons/fa";
-import { useSession } from "next-auth/react";
+
 import { useRouter } from "next/router";
+import { useAuth } from "../../../context/AuthContext";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [sortedPosts, setSortedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { data: session } = useSession();
+
+  const { user } = useAuth();
   const router = useRouter();
 
   //Getting Followed People -- session user
   useEffect(() => {
-    if (session) {
+    if (user) {
       const getPosts = async () => {
         setLoading(true);
 
         const unsubscribeFollowedUsers = onSnapshot(
           query(
-            collection(db, "users", session.user.uid, "follows"),
+            collection(db, "users", user.uid, "follows"),
             where("username", "!=", null)
           ),
           (followedUsers) => {
@@ -56,7 +58,7 @@ const Posts = () => {
 
         const unsubscribeSessionUserPosts = onSnapshot(
           query(
-            collection(db, "users", session.user.uid, "posts"),
+            collection(db, "users", user.uid, "posts"),
             orderBy("timestamp", "desc")
           ),
           (snapshot) => {
@@ -72,7 +74,7 @@ const Posts = () => {
 
       getPosts();
     }
-  }, [db, session?.user?.uid]);
+  }, [db, user]);
 
   useEffect(() => {
     //Removes duplicate post when follows changed and sorts it
@@ -103,7 +105,7 @@ const Posts = () => {
                   postId={post.id}
                   userId={post.userId}
                   username={post.username}
-                  userImg={post.profileImg}
+                  userImg={post.photoURL}
                   img={post.image}
                   caption={post.caption}
                   time={post.timestamp}

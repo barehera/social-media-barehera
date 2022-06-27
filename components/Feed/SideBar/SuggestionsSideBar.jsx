@@ -10,23 +10,22 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../../firebase";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import Router from "next/router";
+import { useAuth } from "../../../context/AuthContext";
 
 const SuggestionsSideBar = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionUserFollowsId, setSessionUserFollowsId] = useState([]);
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
   useEffect(() => {
     const getUsers = async () => {
       //Getting all users
       const q = query(
         collection(db, "users"),
-        where("username", "!=", session.user.username)
+        where("username", "!=", user.username)
       );
       const querySnapshot = await getDocs(q);
       setAllUsers([]);
@@ -37,7 +36,7 @@ const SuggestionsSideBar = () => {
       //Session user's Follows
       const unsubscribeFollows = onSnapshot(
         query(
-          collection(db, "users", session.user.uid, "follows"),
+          collection(db, "users", user.uid, "follows"),
           where("username", "!=", null)
         ),
         (snapshot) => {
@@ -67,15 +66,15 @@ const SuggestionsSideBar = () => {
   }, [db, allUsers, sessionUserFollowsId]);
 
   //Follow Unfollow Function
-  const handleFollow = async (id, username, profileImg) => {
+  const handleFollow = async (id, username, photoURL) => {
     //Setting followed user and follower session user
-    await setDoc(doc(db, "users", session.user.uid, "follows", id), {
+    await setDoc(doc(db, "users", user.uid, "follows", id), {
       username: username,
-      profileImg: profileImg,
+      photoURL: photoURL,
     });
-    await setDoc(doc(db, "users", id, "followers", session.user.uid), {
-      username: session.user.username,
-      profileImg: session.user.image,
+    await setDoc(doc(db, "users", id, "followers", user.uid), {
+      username: user.username,
+      photoURL: user.photoURL,
     });
   };
 
@@ -103,9 +102,9 @@ const SuggestionsSideBar = () => {
               {filteredUser.slice(0, 5).map((user) => (
                 <div key={user.id} className="flex items-center space-x-4">
                   <img
-                    src={user.profileImg}
+                    src={user.photoURL}
                     alt=""
-                    className="w-12 h-12 rounded-full border p-1 cursor-pointer"
+                    className="w-12 h-12 object-cover rounded-full border p-1 cursor-pointer"
                     onClick={() => router.push(`${user.username}`)}
                   />
                   <div className="flex flex-col items-start flex-1">
@@ -122,7 +121,7 @@ const SuggestionsSideBar = () => {
                   <button
                     className="text-blue-400 hover:scale-110 transition-all duration-300 ease-out"
                     onClick={() =>
-                      handleFollow(user.id, user.username, user.profileImg)
+                      handleFollow(user.id, user.username, user.photoURL)
                     }
                   >
                     Follow

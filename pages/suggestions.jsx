@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
 import { FaSpinner } from "react-icons/fa";
 import {
   collection,
-  doc,
   getDocs,
   onSnapshot,
   query,
-  setDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import Router from "next/router";
+import { useAuth } from "../context/AuthContext";
 
 const Suggestions = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUser, setFilteredUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionUserFollowsId, setSessionUserFollowsId] = useState([]);
-  const { data: session } = useSession();
+
+  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (session) {
+    if (user) {
       const getUsers = async () => {
         //Getting all users
         const q = query(
           collection(db, "users"),
-          where("username", "!=", session.user.username)
+          where("username", "!=", user.username)
         );
         const querySnapshot = await getDocs(q);
         setAllUsers([]);
@@ -43,7 +40,7 @@ const Suggestions = () => {
         //Session user's Follows
         const unsubscribeFollows = onSnapshot(
           query(
-            collection(db, "users", session.user.uid, "follows"),
+            collection(db, "users", user.uid, "follows"),
             where("username", "!=", null)
           ),
           (snapshot) => {
@@ -60,7 +57,7 @@ const Suggestions = () => {
       setLoading(true);
       getUsers();
     }
-  }, [db, session]);
+  }, [db, user]);
 
   useEffect(() => {
     //Filtering All Users with using session users follows
@@ -72,17 +69,8 @@ const Suggestions = () => {
       });
   }, [db, allUsers, sessionUserFollowsId]);
 
-  useEffect(() => {
-    if (!session) {
-      Router.push("/auth/signin");
-    } else {
-      Router.push("/suggestions");
-    }
-  }, [session]);
-
   return (
     <div>
-      <Header></Header>
       {loading ? (
         <div className="w-full h-96 flex items-center justify-center">
           <FaSpinner size={40} className="animate-spin"></FaSpinner>
@@ -101,9 +89,9 @@ const Suggestions = () => {
                   onClick={() => router.push(`${user.username}`)}
                 >
                   <img
-                    src={user.profileImg}
+                    src={user.photoURL}
                     alt=""
-                    className="w-12 h-12 rounded-full border p-1 cursor-pointer"
+                    className="w-12 h-12 object-cover rounded-full border p-1 cursor-pointer"
                   />
                   <div className="flex flex-col items-start flex-1">
                     <h4 className="font-bold cursor-pointer">

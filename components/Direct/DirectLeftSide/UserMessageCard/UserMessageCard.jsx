@@ -9,30 +9,29 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { messagesSelectedUser } from "../../../../atoms/messagesUsersAtom";
-import { useSession } from "next-auth/react";
 import { db } from "../../../../firebase";
 import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
+import { useAuth } from "../../../../context/AuthContext";
 
-const UserMessageCard = ({ user }) => {
+const UserMessageCard = ({ messageUser }) => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
   const [messages, setMessages] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { data: session } = useSession();
-
+  const { user } = useAuth();
   useEffect(() => {
     setMessages([]);
     setLoading(true);
-    if (session) {
+    if (user) {
       const unsubscribe = onSnapshot(
         query(
           collection(
             db,
             "users",
-            session?.user?.uid,
+            user.uid,
             "messages",
-            user.id,
+            messageUser.id,
             "messages"
           ),
           orderBy("timestamp", "asc")
@@ -50,13 +49,13 @@ const UserMessageCard = ({ user }) => {
       );
       return unsubscribe;
     }
-  }, [session]);
+  }, [user]);
 
   useEffect(() => {
     const checkRead = () => {
       const count = 0;
       messages.map((message) => {
-        if (message.read === false && session.user.username !== message.owner) {
+        if (message.read === false && user.username !== message.owner) {
           count += 1;
         }
       });
@@ -67,13 +66,13 @@ const UserMessageCard = ({ user }) => {
 
   const readMessage = () => {
     messages.map(async (message) => {
-      if (message.owner !== session.user.username && message.read === false) {
+      if (message.owner !== user.username && message.read === false) {
         const MessageRef = doc(
           db,
           "users",
-          session.user.uid,
+          user.uid,
           "messages",
-          user.id,
+          messageUser.id,
           "messages",
           message.id
         );
@@ -87,11 +86,11 @@ const UserMessageCard = ({ user }) => {
   return (
     <div
       onClick={() => {
-        setSelectedUser(user);
+        setSelectedUser(messageUser);
         readMessage();
       }}
       className={`flex items-center px-4 py-2 hover:bg-gray-100 transition-all ease-out cursor-pointer ${
-        selectedUser && user.id === selectedUser.id && "bg-gray-100"
+        selectedUser && messageUser.id === selectedUser.id && "bg-gray-100"
       }`}
     >
       {loading ? (
@@ -101,12 +100,12 @@ const UserMessageCard = ({ user }) => {
       ) : (
         <>
           <img
-            src={user.profileImg}
+            src={messageUser.photoURL}
             alt=""
-            className="w-14 h-14 rounded-full"
+            className="w-14 h-14 rounded-full object-cover"
           />
           <div className="ml-4 flex-1">
-            <h4 className="text-sm font-semibold">{user.username}</h4>
+            <h4 className="text-sm font-semibold">{messageUser.username}</h4>
             {messages && (
               <div className=" text-gray-500 flex flex-col items-start gap-x-1">
                 <p className="text-sm">

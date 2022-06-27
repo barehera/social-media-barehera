@@ -2,9 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { messagesSelectedUser } from "../../../atoms/messagesUsersAtom";
-import { BsInfoCircle } from "react-icons/bs";
 import { AiOutlineSend, AiOutlineClose } from "react-icons/ai";
-import { useSession } from "next-auth/react";
 import {
   collection,
   query,
@@ -16,12 +14,14 @@ import {
 import { db } from "../../../firebase";
 import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
+import { useAuth } from "../../../context/AuthContext";
 
 const DirectRightSide = () => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-  const { data: session } = useSession();
+
+  const { user } = useAuth();
   const router = useRouter();
   const messagesEndRef = useRef(null);
 
@@ -34,21 +34,14 @@ const DirectRightSide = () => {
   }, [messages]);
 
   useEffect(() => {
-    setSelectedUser(null);
-    if (!session) {
-      router.push("/auth/signin");
-    }
-  }, []);
-
-  useEffect(() => {
     setMessages([]);
-    if (session && selectedUser) {
+    if (user && selectedUser) {
       const unsubscribe = onSnapshot(
         query(
           collection(
             db,
             "users",
-            session?.user?.uid,
+            user?.uid,
             "messages",
             selectedUser?.id,
             "messages"
@@ -79,14 +72,14 @@ const DirectRightSide = () => {
         collection(
           db,
           "users",
-          session?.user?.uid,
+          user?.uid,
           "messages",
-          selectedUser.id,
+          selectedUser?.id,
           "messages"
         ),
         {
           message: inputMessage,
-          owner: session?.user?.username,
+          owner: user.username,
           read: false,
           timestamp: serverTimestamp(),
         }
@@ -97,12 +90,12 @@ const DirectRightSide = () => {
           "users",
           selectedUser.id,
           "messages",
-          session?.user?.uid,
+          user.uid,
           "messages"
         ),
         {
           message: inputMessage,
-          owner: session?.user?.username,
+          owner: user.username,
           read: false,
           timestamp: serverTimestamp(),
         }
@@ -129,9 +122,9 @@ const DirectRightSide = () => {
                   className="flex items-center cursor-pointer "
                 >
                   <img
-                    src={selectedUser?.profileImg}
+                    src={selectedUser?.photoURL}
                     alt=""
-                    className="w-8 h-8 rounded-full"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                   <h3 className="text-sm font-semibold ml-2">
                     {selectedUser?.username}
@@ -153,16 +146,16 @@ const DirectRightSide = () => {
                 <div
                   key={message.id}
                   className={`flex items-center relative   ${
-                    message.owner === session?.user?.username
+                    message.owner === user.username
                       ? "justify-end"
                       : "justify-start"
                   }`}
                 >
-                  {message.owner !== session?.user?.username ? (
+                  {message.owner !== user.username ? (
                     <div className="flex items-baseline gap-x-2 mb-5 ">
                       <img
-                        src={selectedUser.profileImg}
-                        className="w-7 h-7 rounded-full"
+                        src={selectedUser.photoURL}
+                        className="w-7 h-7 rounded-full object-cover"
                       ></img>
                       <div className="relative">
                         <p className="bg-white border  rounded-3xl p-3 text-sm w-36 sm:w-52 md:w-96 break-words">
@@ -193,8 +186,8 @@ const DirectRightSide = () => {
                       </div>
 
                       <img
-                        src={session?.user?.image}
-                        className="w-7 h-7 rounded-full"
+                        src={user.photoURL}
+                        className="w-7 h-7 rounded-full object-cover"
                       ></img>
                     </div>
                   )}
