@@ -276,12 +276,6 @@ const NewProfilePostModal = () => {
                               key={comment.id}
                               className="flex items-start space-x-2 mb-3"
                             >
-                              <img
-                                src={comment.data().userImage}
-                                alt=""
-                                className="h-7 w-7 rounded-full"
-                              />
-
                               <div className="text-sm flex-1 flex items-baseline  space-x-2">
                                 <h6>
                                   <b>{comment.data().username}</b>{" "}
@@ -305,9 +299,8 @@ const NewProfilePostModal = () => {
                         </div>
                       )}
                     </div>
-
                     {/*Like comment send icons section */}
-                    <div className="flex space-x-4 p-4 items-center">
+                    <div className="flex space-x-4 px-4 mt-3 mb-1 items-center">
                       {hasLiked ? (
                         <AiFillHeart
                           size={28}
@@ -327,6 +320,12 @@ const NewProfilePostModal = () => {
                         className="postButton"
                       ></FaRegComment>
                       <FiSend size={24} className="postButton"></FiSend>
+                    </div>
+                    {/*Caption */}
+                    <div className="px-4 flex flex-col">
+                      <span>
+                        <b>{post.username}</b> {post.caption}
+                      </span>
                     </div>
 
                     {/*Likes and date */}
