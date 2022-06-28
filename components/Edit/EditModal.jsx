@@ -15,7 +15,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Router from "next/router";
 import { useAuth } from "../../context/AuthContext";
 
-const Modal = () => {
+const EditModal = () => {
   const { user } = useAuth();
   const [open, setOpen] = useRecoilState(editModalState);
   const filePickerRef = useRef(null);
@@ -152,4 +152,4 @@ const Modal = () => {
   );
 };
 
-export default Modal;
+export default EditModal;

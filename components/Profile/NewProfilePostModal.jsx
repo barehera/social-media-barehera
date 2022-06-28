@@ -36,11 +36,62 @@ const NewProfilePostModal = () => {
   const [userPost, setUserPost] = useRecoilState(profileUserPost);
   const [post, setPost] = useState([]);
   const [likes, setLikes] = useState([]);
-  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
   const { user } = useAuth();
+
+  //getting user info
+  useEffect(() => {
+    const getUser = async () => {
+      if (userPost.userId) {
+        const docRef = doc(db, "users", userPost.userId);
+        const docSnap = await getDoc(docRef);
+        setUserInfo(docSnap.data());
+      }
+    };
+    getUser();
+  }, [userPost.userId]);
+
+  //Comments
+  useEffect(() => {
+    if (userPost.userId) {
+      const unsubscribe = onSnapshot(
+        query(
+          collection(
+            db,
+            "users",
+            userPost.userId,
+            "posts",
+            userPost.postId,
+            "comments"
+          ),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => {
+          setComments([]);
+          snapshot.docs.forEach(async (snap) => {
+            const userId = snap.data().userId;
+            const userInfoDoc = await getDoc(doc(db, "users", userId));
+
+            setComments((comments) => [
+              ...comments,
+              {
+                photoURL: userInfoDoc.data().photoURL,
+                username: userInfoDoc.data().username,
+                ...snap.data(),
+                id: snap.id,
+              },
+            ]);
+          });
+        }
+      );
+
+      return unsubscribe;
+    }
+  }, [db, userPost.userId, userPost.postId]);
 
   //getting user posts from firestore
   useEffect(() => {
@@ -63,29 +114,6 @@ const NewProfilePostModal = () => {
       getUserPosts();
     }
   }, [userPost]);
-
-  //Comments
-  useEffect(() => {
-    if (userPost.postId) {
-      const unsubscribe = onSnapshot(
-        query(
-          collection(
-            db,
-            "users",
-            userPost.userId,
-            "posts",
-            userPost.postId,
-            "comments"
-          ),
-          orderBy("timestamp", "desc")
-        ),
-        (snapshot) => {
-          setComments(snapshot.docs);
-        }
-      );
-      return unsubscribe;
-    }
-  }, [db, userPost]);
 
   //Likes
   useEffect(() => {
@@ -128,8 +156,7 @@ const NewProfilePostModal = () => {
         ),
         {
           comment: commentToSend,
-          username: user.username,
-          userImage: user.photoURL,
+          userId: user.uid,
           timestamp: serverTimestamp(),
         }
       );
@@ -178,7 +205,7 @@ const NewProfilePostModal = () => {
       const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
       deleteObject(imageRef)
         .then(router.reload(window.location.pathname))
-        .catch((err) => console.log(err));
+        .catch((err) => alert(err));
     } else {
       alert("You are not user!!!!");
     }
@@ -196,8 +223,8 @@ const NewProfilePostModal = () => {
           setTimeout(() => {
             setPost([]);
             setLikes([]);
-            setComments([]);
             setComment("");
+            setComments([]);
           }, 200);
         }}
       >
@@ -240,11 +267,13 @@ const NewProfilePostModal = () => {
                     <div className="flex p-4 justify-between items-center lg:border-none">
                       <div className="flex items-center space-x-4 ">
                         <img
-                          src={post.photoURL}
+                          src={userInfo.photoURL}
                           alt=""
                           className="w-10 h-10 rounded-full object-cover"
                         />
-                        <p className="text-sm font-semibold">{post.username}</p>
+                        <p className="text-sm font-semibold">
+                          {userInfo.username}
+                        </p>
                       </div>
                       {user?.uid === userPost.userId && (
                         <div className="relative flex items-center">
@@ -268,18 +297,17 @@ const NewProfilePostModal = () => {
                       )}
                     </div>
                     {/*Comments */}
-                    <div className="py-5 border-y border-gray-300 lg:h-72">
+                    <div className="py-5  border-y border-gray-300 lg:h-72">
                       {comments.length > 0 ? (
-                        <div className="ml-10 max-h-48 lg:max-h-60 overflow-y-scroll scrollbar-thumb-gray-300 scrollbar-thin  flex flex-col gap-y-4">
+                        <div className="ml-10 max-h-48 lg:max-h-60 overflow-y-scroll scrollbar-thumb-gray-300 scrollbar-thin  flex flex-col gap-y-2">
                           {comments.map((comment) => (
                             <div
                               key={comment.id}
-                              className="flex items-start space-x-2 mb-3"
+                              className="flex items-start space-x-2 "
                             >
                               <div className="text-sm flex-1 flex items-baseline  space-x-2">
                                 <h6>
-                                  <b>{comment.data().username}</b>{" "}
-                                  {comment.data().comment}
+                                  <b>{comment.username}</b> {comment.comment}
                                 </h6>
                               </div>
 
@@ -288,7 +316,7 @@ const NewProfilePostModal = () => {
                                 className="pr-5 text-xs text-gray-500"
                                 fromNow
                               >
-                                {comment.data().timestamp?.toDate()}
+                                {comment.timestamp?.toDate()}
                               </Moment>
                             </div>
                           ))}
@@ -299,8 +327,9 @@ const NewProfilePostModal = () => {
                         </div>
                       )}
                     </div>
+
                     {/*Like comment send icons section */}
-                    <div className="flex space-x-4 px-4 mt-3 mb-1 items-center">
+                    <div className="flex space-x-4 p-4 items-center">
                       {hasLiked ? (
                         <AiFillHeart
                           size={28}
@@ -320,12 +349,6 @@ const NewProfilePostModal = () => {
                         className="postButton"
                       ></FaRegComment>
                       <FiSend size={24} className="postButton"></FiSend>
-                    </div>
-                    {/*Caption */}
-                    <div className="px-4 flex flex-col py-1">
-                      <span>
-                        <b>{post.username}</b> {post.caption}
-                      </span>
                     </div>
 
                     {/*Likes and date */}

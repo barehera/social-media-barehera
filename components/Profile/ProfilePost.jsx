@@ -4,6 +4,7 @@ import { AiFillHeart } from "react-icons/ai";
 import {
   collection,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -23,17 +24,33 @@ const ProfilePost = ({ post, userId, postId }) => {
 
   //Comments
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(
-        collection(db, "users", userId, "posts", postId, "comments"),
-        orderBy("timestamp", "desc")
-      ),
-      (snapshot) => {
-        setComments(snapshot.docs);
-      }
-    );
+    if (userId) {
+      const unsubscribe = onSnapshot(
+        query(
+          collection(db, "users", userId, "posts", postId, "comments"),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => {
+          setComments([]);
+          snapshot.docs.forEach(async (snap) => {
+            const userId = snap.data().userId;
+            const userInfoDoc = await getDoc(doc(db, "users", userId));
 
-    return unsubscribe;
+            setComments((comments) => [
+              ...comments,
+              {
+                photoURL: userInfoDoc.data().photoURL,
+                username: userInfoDoc.data().username,
+                ...snap.data(),
+                id: snap.id,
+              },
+            ]);
+          });
+        }
+      );
+
+      return unsubscribe;
+    }
   }, [db, userId, postId]);
 
   //Likes
@@ -57,7 +74,10 @@ const ProfilePost = ({ post, userId, postId }) => {
         className="absolute top-0 w-full h-full bg-black bg-opacity-0 z-10 hover:bg-opacity-30 transition-all ease-out cursor-pointer"
         onClick={() => {
           setOpen(true);
-          setUserPost({ postId: postId, userId: post.data().userId });
+          setUserPost({
+            postId: postId,
+            userId: post.data().userId,
+          });
         }}
       >
         <div className="flex items-center justify-center h-full w-full space-x-10 opacity-0 hover:opacity-100">

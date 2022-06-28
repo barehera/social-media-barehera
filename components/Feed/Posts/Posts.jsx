@@ -104,12 +104,9 @@ const Posts = () => {
                   key={post.id}
                   postId={post.id}
                   userId={post.userId}
-                  username={post.username}
-                  userImg={post.photoURL}
                   img={post.image}
                   caption={post.caption}
                   time={post.timestamp}
-                  userRef={post.userRef}
                 ></Post>
               ))}
             </>
