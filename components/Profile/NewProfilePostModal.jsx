@@ -285,7 +285,7 @@ const NewProfilePostModal = () => {
                     </div>
                     {/*Comments */}
                     <div className="py-5  border-y border-gray-300 lg:h-72">
-                      {!comments.empty ? (
+                      {comments.length > 0 ? (
                         <div className="ml-10  max-h-48 lg:max-h-60 overflow-y-scroll   scrollbar-thumb-gray-300 scrollbar-thin  flex flex-col gap-y-2">
                           {comments.map((comment) => (
                             <Comment

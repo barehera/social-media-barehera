@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { IoMdGrid } from "react-icons/io";
-import { AiOutlineFlag, AiOutlineLock } from "react-icons/ai";
-import { HiOutlineUserGroup } from "react-icons/hi";
+import { AiOutlineLock } from "react-icons/ai";
 import Modal from "../components/NewPostModal/Modal";
 import {
   collection,
@@ -14,7 +12,6 @@ import {
   setDoc,
   doc,
   deleteDoc,
-  getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
@@ -174,10 +171,10 @@ const Profile = () => {
                     {/*username and edit profile button */}
                     <div className="flex flex-col md:flex-row items-start gap-x-4 md:items-center gap-y-2">
                       <h4 className="text-lg font-light">
-                        {profileUser?.username}{" "}
+                        {profileUser?.username}
+                        {profileUser.age && "-" + profileUser.age}{" "}
                         {profileUser.displayName &&
-                          `(${profileUser.displayName} -
-                         ${profileUser.age})`}
+                          `(${profileUser.displayName})`}
                       </h4>
                       {user.username == profileUser.username && (
                         <button
@@ -264,11 +261,6 @@ const Profile = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/*Name section */}
-                    <div className="hidden">
-                      <p className="font-semibold">TEST</p>
-                    </div>
                   </div>
                 </div>
 
@@ -322,127 +314,110 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/*Icons */}
-                <div className=" flex items-center px-6 justify-around md:justify-center py-3 border-b md:border-b-0 md:border-t border-gray-300 w-full text-gray-500 md:gap-x-4">
-                  <div className="md:p-2 md:rounded-lg md:flex md:items-center md:gap-x-1 cursor-pointer  hover:bg-gray-100 transition-all">
-                    <IoMdGrid className="text-blue-400 " size={24}></IoMdGrid>
-                    <p className="hidden md:flex">Gönderiler</p>
-                  </div>
-                  <div
-                    className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all"
-                    onClick={() => alert("work in progress!")}
-                  >
-                    <AiOutlineFlag size={24}></AiOutlineFlag>
-                    <p className="hidden md:flex">Kaydedilenler</p>
-                  </div>
-                  <div
-                    className="md:p-2 md:rounded-lg md:flex md:items-center  md:gap-x-2 cursor-pointer hover:bg-gray-100 transition-all"
-                    onClick={() => alert("work in progress!")}
-                  >
-                    <HiOutlineUserGroup size={24}></HiOutlineUserGroup>
-                    <p className="hidden md:flex">Etiketlenenler</p>
-                  </div>
-                </div>
                 {/*Posts*/}
-                {user ? (
-                  <div>
-                    {user?.uid === profileUser.id ? (
-                      <div>
-                        {posts.length > 0 ? (
-                          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
-                            {posts.map((post) => (
-                              <ProfilePost
-                                key={post.id}
-                                userId={post.data().userId}
-                                postId={post.id}
-                                post={post}
-                              ></ProfilePost>
-                            ))}
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="flex items-center justify-center h-40 mx-auto">
-                              <div className="w-full flex flex-col items-center justify-center px-6">
-                                <h4 className="font-semibold text-center mb-2">
-                                  Hayatından kareleri çekip paylaşmaya başla.
-                                </h4>
-                                <p className="text-sm text-center ">
-                                  ilk fotoğrafını paylasmak icin + butonuna
-                                  tıkla
-                                </p>
-                              </div>
+                <div className="border-t border-gray-300">
+                  {user ? (
+                    <div>
+                      {user?.uid === profileUser.id ? (
+                        <div>
+                          {posts.length > 0 ? (
+                            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
+                              {posts.map((post) => (
+                                <ProfilePost
+                                  key={post.id}
+                                  userId={post.data().userId}
+                                  postId={post.id}
+                                  post={post}
+                                ></ProfilePost>
+                              ))}
                             </div>
-                            <div className="flex items-center justify-center">
-                              <img
-                                src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
-                                alt="picture"
-                                className="w-full h-auto object-contain"
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        {hasFollowed ? (
-                          <div>
-                            {posts.length > 0 ? (
-                              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
-                                {posts.map((post) => (
-                                  <ProfilePost
-                                    key={post.id}
-                                    userId={post.data().userId}
-                                    postId={post.id}
-                                    post={post}
-                                  ></ProfilePost>
-                                ))}
-                              </div>
-                            ) : (
+                          ) : (
+                            <div>
                               <div className="flex items-center justify-center h-40 mx-auto">
                                 <div className="w-full flex flex-col items-center justify-center px-6">
-                                  <h4 className="text-center mb-2 text-gray-500">
-                                    <b className="px-1 text-black text-center">
-                                      {profileUser.username}
-                                    </b>
-                                    has no posts at the moment...
+                                  <h4 className="font-semibold text-center mb-2">
+                                    Hayatından kareleri çekip paylaşmaya başla.
                                   </h4>
+                                  <p className="text-sm text-center ">
+                                    ilk fotoğrafını paylasmak icin + butonuna
+                                    tıkla
+                                  </p>
                                 </div>
                               </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="w-full mt-10 flex flex-col items-center h-40">
-                            <AiOutlineLock
-                              size={124}
-                              className="text-gray-200"
-                            ></AiOutlineLock>
-                            <div className=" flex items-center justify-center text-gray-500 text-center">
-                              Follow
-                              <b className="px-1 text-black">
-                                {profileUser.username}
-                              </b>
-                              to see posts...
+                              <div className="flex items-center justify-center">
+                                <img
+                                  src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
+                                  alt="picture"
+                                  className="w-full h-auto object-contain"
+                                />
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="w-full h-40 flex flex-col items-center justify-center text-gray-500 gap-y-3 text-center">
-                    <p>
-                      Login to see
-                      <b className="px-1 text-black">{profileUser.username}</b>
-                      posts...
-                    </p>
-                    <button
-                      className="p-2 bg-blue-500 text-white rounded-sm w-24"
-                      onClick={() => router.push("/login")}
-                    >
-                      Login
-                    </button>
-                  </div>
-                )}
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          {hasFollowed ? (
+                            <div>
+                              {posts.length > 0 ? (
+                                <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 lg:gap-5 justify-center items-center my-8 px-4">
+                                  {posts.map((post) => (
+                                    <ProfilePost
+                                      key={post.id}
+                                      userId={post.data().userId}
+                                      postId={post.id}
+                                      post={post}
+                                    ></ProfilePost>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center h-40 mx-auto">
+                                  <div className="w-full flex flex-col items-center justify-center px-6">
+                                    <h4 className="text-center mb-2 text-gray-500">
+                                      <b className="px-1 text-black text-center">
+                                        {profileUser.username}
+                                      </b>
+                                      has no posts at the moment...
+                                    </h4>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="w-full mt-10 flex flex-col items-center h-40">
+                              <AiOutlineLock
+                                size={124}
+                                className="text-gray-200"
+                              ></AiOutlineLock>
+                              <div className=" flex items-center justify-center text-gray-500 text-center">
+                                Follow
+                                <b className="px-1 text-black">
+                                  {profileUser.username}
+                                </b>
+                                to see posts...
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full h-40 flex flex-col items-center justify-center text-gray-500 gap-y-3 text-center">
+                      <p>
+                        Login to see
+                        <b className="px-1 text-black">
+                          {profileUser.username}
+                        </b>
+                        posts...
+                      </p>
+                      <button
+                        className="p-2 bg-blue-500 text-white rounded-sm w-24"
+                        onClick={() => router.push("/login")}
+                      >
+                        Login
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <Modal></Modal>
               <NewProfilePostModal></NewProfilePostModal>
