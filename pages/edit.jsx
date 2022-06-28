@@ -163,16 +163,16 @@ const Edit = () => {
               }
             />
           </div>
-          {/*tel input */}
+          {/*age input */}
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-lg font-semibold">Phone Number</label>
+            <label className="text-lg font-semibold">Age</label>
             <input
               type="number"
-              placeholder="Phone Number"
+              placeholder="Age"
               className="border border-gray-300 rounded p-2 "
-              value={editData.phoneNumber ? editData.phoneNumber : ""}
+              value={editData.age ? editData.age : ""}
               onChange={(e) =>
-                setEditData({ ...editData, phoneNumber: e.target.value })
+                setEditData({ ...editData, age: e.target.value })
               }
             />
           </div>
