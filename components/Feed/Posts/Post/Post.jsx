@@ -40,6 +40,7 @@ const Post = ({
   const router = useRouter();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [sortedComments, setSortedComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -47,6 +48,7 @@ const Post = ({
 
   //Posts
   useEffect(() => {
+<<<<<<< Updated upstream
     const unsubscribe = onSnapshot(
       query(
         collection(db, "users", userId, "posts", postId, "comments"),
@@ -56,9 +58,49 @@ const Post = ({
         setComments(snapshot.docs);
       }
     );
+=======
+    const unsub = onSnapshot(doc(db, "users", userId), (doc) => {
+      setUserInfo(doc.data());
+    });
+    return unsub;
+  }, []);
+
+  //Comments
+  useEffect(() => {
+    if (userId) {
+      const unsubscribe = onSnapshot(
+        query(collection(db, "users", userId, "posts", postId, "comments")),
+        (snapshot) => {
+          setComments([]);
+
+          snapshot.docs.forEach(async (snap) => {
+            const userInfoDoc = await getDoc(
+              doc(db, "users", snap.data().userId)
+            );
+
+            setComments((comments) => [
+              ...comments,
+              {
+                photoURL: userInfoDoc.data().photoURL,
+                username: userInfoDoc.data().username,
+                ...snap.data(),
+                id: snap.id,
+              },
+            ]);
+          });
+        }
+      );
+>>>>>>> Stashed changes
 
     return unsubscribe;
   }, [db, userId, postId]);
+
+  useEffect(() => {
+    //Removes duplicate comments when new comment added and sorts it
+    setSortedComments(
+      comments.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds)
+    );
+  }, [comments]);
 
   //Likes
   useEffect(() => {
@@ -113,7 +155,7 @@ const Post = ({
   const deletePost = async (userId, postId) => {
     if (user?.uid === userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
-      const imageRef = ref(storage, `${username}/posts/${postId}/image`);
+      const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
       deleteObject(imageRef)
         .then(router.reload(window.location.pathname))
         .catch((err) => console.log(err));
@@ -209,7 +251,7 @@ const Post = ({
       </div>
       {/*coments */}
       {comments.length > 0 && (
-        <div className="ml-10 max-h-40 overflow-y-scroll scrollbar-thumb-black scrollbar-thin mb-4">
+        <div className="ml-10 max-h-40 min-h-40 overflow-y-scroll scrollbar-thumb-black scrollbar-thin mb-4">
           {comments.map((comment) => (
             <div key={comment.id} className="flex items-start space-x-2 mb-3">
               <div className="text-sm flex-1 flex items-baseline  space-x-2">

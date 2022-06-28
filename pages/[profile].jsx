@@ -168,16 +168,19 @@ const Profile = () => {
                     alt=""
                     className="w-20 h-20 rounded-full object-cover"
                   />
-                  <div className="flex flex-col gap-y-6 flex-1">
+                  <div className="flex flex-col gap-y-2 flex-1">
                     {/*username and edit profile button */}
                     <div className="flex flex-col md:flex-row items-start gap-x-4 md:items-center gap-y-2">
                       <h4 className="text-lg font-light">
-                        {profileUser?.username}
+                        {profileUser?.username}{" "}
+                        {profileUser.displayName &&
+                          `(${profileUser.displayName} -
+                         ${profileUser.age})`}
                       </h4>
                       {user.username == profileUser.username && (
                         <button
                           className="text-sm border rounded-sm border-gray-300 py-1 px-4 font-semibold md:w-36 "
-                          onClick={() => alert("work in progress!")}
+                          onClick={() => router.push("/edit")}
                         >
                           Edit Profile
                         </button>
@@ -206,7 +209,10 @@ const Profile = () => {
                         </>
                       )}
                     </div>
-
+                    {/*Bio */}
+                    <div>
+                      <p className="text-sm">{profileUser.bio}</p>
+                    </div>
                     {/*Follows-Follower number */}
 
                     <div className="gap-x-6 hidden md:flex">

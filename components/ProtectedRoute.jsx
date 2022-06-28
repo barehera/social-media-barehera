@@ -9,8 +9,6 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     if (!user) {
       router.push("/login");
-    } else {
-      router.push("/");
     }
   }, [user]);
 
