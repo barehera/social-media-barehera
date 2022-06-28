@@ -13,7 +13,6 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -25,6 +24,7 @@ import { db, storage } from "../../../../firebase";
 import Moment from "react-moment";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../context/AuthContext";
+import Comment from "./Comment";
 
 const Post = ({ userId, postId, img, caption, time }) => {
   const { user } = useAuth();
@@ -35,6 +35,7 @@ const Post = ({ userId, postId, img, caption, time }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
+
   const date = new Date(time?.seconds * 1000);
 
   //Getting post owners username and profile photo
@@ -49,37 +50,18 @@ const Post = ({ userId, postId, img, caption, time }) => {
   useEffect(() => {
     if (userId) {
       const unsubscribe = onSnapshot(
-        query(collection(db, "users", userId, "posts", postId, "comments")),
+        query(
+          collection(db, "users", userId, "posts", postId, "comments"),
+          orderBy("timestamp", "desc")
+        ),
         (snapshot) => {
-          setComments([]);
-
-          snapshot.docs.forEach(async (snap) => {
-            const userInfoDoc = await getDoc(
-              doc(db, "users", snap.data().userId)
-            );
-
-            setComments((comments) => [
-              ...comments,
-              {
-                photoURL: userInfoDoc.data().photoURL,
-                username: userInfoDoc.data().username,
-                ...snap.data(),
-                id: snap.id,
-              },
-            ]);
-          });
+          setComments(snapshot.docs);
         }
       );
 
       return unsubscribe;
     }
   }, [db, userId, postId]);
-
-  useEffect(() => {
-    //Removes duplicate comments when new comment added and sorts it
-
-    comments.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
-  }, [comments]);
 
   //Likes
   useEffect(() => {
@@ -227,33 +209,15 @@ const Post = ({ userId, postId, img, caption, time }) => {
           <b>{userInfo.username}</b> {caption}
         </span>
       </div>
-      {/*coments */}
+      {/*comments */}
       {comments.length > 0 && (
         <div className="ml-10 max-h-40 overflow-y-scroll scrollbar-thumb-black scrollbar-thin mb-4">
           {comments.map((comment) => (
-            <div key={comment.id} className="flex items-start space-x-2 mb-3">
-              <img
-                src={comment.photoURL}
-                alt=""
-                className="h-7 w-7 rounded-full"
-              />
-              <div className="text-sm flex-1 flex items-baseline  space-x-2">
-                <h6>
-                  <b>{comment.username}</b> {comment.comment}
-                </h6>
-              </div>
-
-              <Moment
-                interval={1000}
-                className="pr-5 text-xs text-gray-500"
-                fromNow
-              >
-                {comment.timestamp?.toDate()}
-              </Moment>
-            </div>
+            <Comment key={comment.id} comment={comment}></Comment>
           ))}
         </div>
       )}
+
       {/*input box */}
       {user && (
         <form className="flex items-center p-2">

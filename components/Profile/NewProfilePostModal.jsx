@@ -26,6 +26,7 @@ import {
 import { db, storage } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
 import { useAuth } from "../../context/AuthContext";
+import Comment from "./Comment";
 
 const NewProfilePostModal = () => {
   const cancelButtonRef = useRef(null);
@@ -71,21 +72,7 @@ const NewProfilePostModal = () => {
           orderBy("timestamp", "desc")
         ),
         (snapshot) => {
-          setComments([]);
-          snapshot.docs.forEach(async (snap) => {
-            const userId = snap.data().userId;
-            const userInfoDoc = await getDoc(doc(db, "users", userId));
-
-            setComments((comments) => [
-              ...comments,
-              {
-                photoURL: userInfoDoc.data().photoURL,
-                username: userInfoDoc.data().username,
-                ...snap.data(),
-                id: snap.id,
-              },
-            ]);
-          });
+          setComments(snapshot.docs);
         }
       );
 
@@ -298,27 +285,13 @@ const NewProfilePostModal = () => {
                     </div>
                     {/*Comments */}
                     <div className="py-5  border-y border-gray-300 lg:h-72">
-                      {comments.length > 0 ? (
-                        <div className="ml-10 max-h-48 lg:max-h-60 overflow-y-scroll scrollbar-thumb-gray-300 scrollbar-thin  flex flex-col gap-y-2">
+                      {!comments.empty ? (
+                        <div className="ml-10  max-h-48 lg:max-h-60 overflow-y-scroll   scrollbar-thumb-gray-300 scrollbar-thin  flex flex-col gap-y-2">
                           {comments.map((comment) => (
-                            <div
+                            <Comment
                               key={comment.id}
-                              className="flex items-start space-x-2 "
-                            >
-                              <div className="text-sm flex-1 flex items-baseline  space-x-2">
-                                <h6>
-                                  <b>{comment.username}</b> {comment.comment}
-                                </h6>
-                              </div>
-
-                              <Moment
-                                interval={1000}
-                                className="pr-5 text-xs text-gray-500"
-                                fromNow
-                              >
-                                {comment.timestamp?.toDate()}
-                              </Moment>
-                            </div>
+                              comment={comment}
+                            ></Comment>
                           ))}
                         </div>
                       ) : (
