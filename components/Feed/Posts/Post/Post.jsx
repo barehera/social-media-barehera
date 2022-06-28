@@ -49,12 +49,10 @@ const Post = ({ userId, postId, img, caption, time }) => {
   useEffect(() => {
     if (userId) {
       const unsubscribe = onSnapshot(
-        query(
-          collection(db, "users", userId, "posts", postId, "comments"),
-          orderBy("timestamp", "desc")
-        ),
+        query(collection(db, "users", userId, "posts", postId, "comments")),
         (snapshot) => {
           setComments([]);
+
           snapshot.docs.forEach(async (snap) => {
             const userInfoDoc = await getDoc(
               doc(db, "users", snap.data().userId)
@@ -76,6 +74,12 @@ const Post = ({ userId, postId, img, caption, time }) => {
       return unsubscribe;
     }
   }, [db, userId, postId]);
+
+  useEffect(() => {
+    //Removes duplicate comments when new comment added and sorts it
+
+    comments.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
+  }, [comments]);
 
   //Likes
   useEffect(() => {
@@ -129,7 +133,7 @@ const Post = ({ userId, postId, img, caption, time }) => {
   const deletePost = async (userId, postId) => {
     if (user?.uid === userId) {
       await deleteDoc(doc(db, "users", userId, "posts", postId));
-      const imageRef = ref(storage, `${username}/posts/${postId}/image`);
+      const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
       deleteObject(imageRef)
         .then(router.reload(window.location.pathname))
         .catch((err) => alert(err));
