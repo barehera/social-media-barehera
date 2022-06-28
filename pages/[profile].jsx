@@ -19,6 +19,7 @@ import ProfilePost from "../components/Profile/ProfilePost";
 import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
 import { useAuth } from "../context/AuthContext";
 import FollowFollowerUser from "../components/Profile/FollowFollowerUser/FollowFollowerUser";
+import Image from "next/image";
 
 const Profile = () => {
   //Router
@@ -162,11 +163,14 @@ const Profile = () => {
               <div className="md:max-w-5xl mx-auto flex flex-col">
                 {/*Profile image and info */}
                 <div className="flex items-center gap-x-12 w-full p-4 ">
-                  <img
+                  <Image
                     src={profileUser?.photoURL}
-                    alt=""
-                    className="w-20 h-20 rounded-full object-cover"
+                    width={100}
+                    height={100}
+                    className="rounded-full"
+                    objectFit="cover"
                   />
+
                   <div className="flex flex-col gap-y-2 flex-1">
                     {/*username and edit profile button */}
                     <div className="flex flex-col md:flex-row items-start gap-x-4 md:items-center gap-y-2">
@@ -344,11 +348,11 @@ const Profile = () => {
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center justify-center">
-                                <img
+                              <div className="relative h-96 w-full flex items-center justify-center">
+                                <Image
                                   src="https://embedsocial.com/wp-content/uploads/2020/10/add-links-instagram-posts.jpg"
-                                  alt="picture"
-                                  className="w-full h-auto object-contain"
+                                  layout="fill"
+                                  objectFit="contain"
                                 />
                               </div>
                             </div>

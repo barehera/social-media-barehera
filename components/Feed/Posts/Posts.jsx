@@ -91,41 +91,35 @@ const Posts = () => {
 
   return (
     <div>
-      {loading ? (
-        <div className="w-full h-96 flex items-center justify-center">
-          <FaSpinner size={30} className="animate-spin"></FaSpinner>
-        </div>
-      ) : (
-        <div className="my-8">
-          {sortedPosts.length > 0 ? (
-            <>
-              {sortedPosts?.map((post) => (
-                <Post
-                  key={post.id}
-                  postId={post.id}
-                  userId={post.userId}
-                  img={post.image}
-                  caption={post.caption}
-                  time={post.timestamp}
-                ></Post>
-              ))}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-center">
-              <h1 className="text-lg font-bold ">NO POSTS</h1>
-              <p className="text-sm  text-gray-500">
-                You can find new friends and follow them to see their posts
-              </p>
-              <button
-                className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
-                onClick={() => router.push("/suggestions")}
-              >
-                Go Suggestions
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="my-8">
+        {sortedPosts.length > 0 ? (
+          <>
+            {sortedPosts?.map((post) => (
+              <Post
+                key={post.id}
+                postId={post.id}
+                userId={post.userId}
+                img={post.image}
+                caption={post.caption}
+                time={post.timestamp}
+              ></Post>
+            ))}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center">
+            <h1 className="text-lg font-bold ">NO POSTS</h1>
+            <p className="text-sm  text-gray-500">
+              You can find new friends and follow them to see their posts
+            </p>
+            <button
+              className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
+              onClick={() => router.push("/suggestions")}
+            >
+              Go Suggestions
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

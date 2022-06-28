@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const FollowFollowerUser = ({ follower }) => {
   const router = useRouter();
@@ -18,11 +19,16 @@ const FollowFollowerUser = ({ follower }) => {
       key={follower.id}
       onClick={() => router.push(`/${userInfo.username}`)}
     >
-      <img
-        src={userInfo.photoURL}
-        alt=""
-        className="h-5 w-5 rounded-full object-cover"
-      />
+      {userInfo.photoURL && (
+        <Image
+          src={userInfo.photoURL}
+          width={20}
+          height={20}
+          className="rounded-full"
+          objectFit="cover"
+        />
+      )}
+
       <p className="text-xs">{userInfo.username}</p>
     </div>
   );

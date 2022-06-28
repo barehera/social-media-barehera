@@ -94,12 +94,12 @@ const Login = () => {
                 <img
                   src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_turkish-tr.png/30b29fd697b2.png"
                   alt="appstore download"
-                  className="w-36  object-contain cursor-pointer"
+                  className="w-36 h-full  object-contain cursor-pointer"
                 />
                 <img
                   src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_turkish-tr.png/9d46177cf153.png"
                   alt="googleplay download"
-                  className="w-36  object-contain cursor-pointer"
+                  className="w-36 h-full  object-contain cursor-pointer"
                 />
               </div>
             </div>

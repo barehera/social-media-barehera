@@ -14,6 +14,7 @@ import { db } from "../firebase";
 import { useRouter } from "next/router";
 import EditModal from "../components/Edit/EditModal";
 import { editModalState } from "../atoms/modalAtom";
+import Image from "next/image";
 
 const Edit = () => {
   const { user } = useAuth();
@@ -103,10 +104,12 @@ const Edit = () => {
           {/*User Photo and username */}
           <div className="flex  gap-x-2 items-center ">
             <div className="relative group h-32 w-32 rounded-full">
-              <img
+              <Image
                 src={user.photoURL}
-                alt=""
-                className="w-32 h-32 rounded-full object-cover"
+                width={128}
+                height={128}
+                className="rounded-full"
+                objectFit="cover"
               />
               <span
                 onClick={() => setOpen(true)}

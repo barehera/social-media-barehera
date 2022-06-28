@@ -15,6 +15,7 @@ import { db } from "../../../firebase";
 import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
+import Image from "next/image";
 
 const DirectRightSide = () => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
@@ -121,11 +122,14 @@ const DirectRightSide = () => {
                   onClick={() => router.push(`/${selectedUser.username}`)}
                   className="flex items-center cursor-pointer "
                 >
-                  <img
+                  <Image
                     src={selectedUser?.photoURL}
-                    alt=""
-                    className="w-8 h-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                    objectFit="cover"
                   />
+
                   <h3 className="text-sm font-semibold ml-2">
                     {selectedUser?.username}
                   </h3>
@@ -151,10 +155,14 @@ const DirectRightSide = () => {
                 >
                   {message.owner !== user.uid ? (
                     <div className="flex items-baseline gap-x-2 mb-5 ">
-                      <img
+                      <Image
                         src={selectedUser.photoURL}
-                        className="w-7 h-7 rounded-full object-cover"
-                      ></img>
+                        width={28}
+                        height={28}
+                        className="rounded-full "
+                        objectFit="cover"
+                      />
+
                       <div className="relative">
                         <p className="bg-white border  rounded-3xl p-3 text-sm w-36 sm:w-52 md:w-96 break-words">
                           {message.message}
@@ -182,11 +190,13 @@ const DirectRightSide = () => {
                           {message.timestamp?.toDate()}
                         </Moment>
                       </div>
-
-                      <img
+                      <Image
                         src={user.photoURL}
-                        className="w-7 h-7 rounded-full object-cover"
-                      ></img>
+                        width={28}
+                        height={28}
+                        className="rounded-full"
+                        objectFit="cover"
+                      />
                     </div>
                   )}
                   <div ref={messagesEndRef} />

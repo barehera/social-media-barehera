@@ -3,6 +3,7 @@ import Moment from "react-moment";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { FaSpinner } from "react-icons/fa";
+import Image from "next/image";
 
 const Comment = ({ comment }) => {
   const [userInfo, setUserInfo] = useState([]);
@@ -45,11 +46,16 @@ const Comment = ({ comment }) => {
       ) : (
         <div className="flex items-start space-x-2">
           <div className="text-sm flex-1 flex  items-start  space-x-2">
-            <img
-              src={userInfo.photoURL}
-              alt=""
-              className="w-7 h-7  rounded-full object-cover"
-            />
+            {userInfo.photoURL && (
+              <Image
+                src={userInfo.photoURL}
+                width={28}
+                height={28}
+                className="rounded-full"
+                objectFit="cover"
+              />
+            )}
+
             <h6 className="max-w-[10rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[13rem] break-words">
               <b>{userInfo.username}</b> {comment.data().comment}
             </h6>

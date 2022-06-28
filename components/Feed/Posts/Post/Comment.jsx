@@ -1,4 +1,5 @@
 import { doc, getDoc } from "firebase/firestore";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import Moment from "react-moment";
@@ -20,7 +21,16 @@ const Comment = ({ comment }) => {
   return (
     <>
       <div className="flex items-start space-x-2 mb-3">
-        <img src={userInfo.photoURL} alt="" className="h-7 w-7 rounded-full" />
+        {userInfo.photoURL && (
+          <Image
+            src={userInfo.photoURL}
+            width={28}
+            height={28}
+            className="rounded-full"
+            objectFit="cover"
+          />
+        )}
+
         <div className="text-sm flex-1 flex items-baseline  space-x-2">
           <h6 className="max-w-[14rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem] break-words">
             <b>{userInfo.username}</b> {comment.data().comment}

@@ -10,6 +10,7 @@ import {
 import { db } from "../firebase";
 import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
+import Image from "next/image";
 
 const Suggestions = () => {
   const [allUsers, setAllUsers] = useState([]);
@@ -88,11 +89,14 @@ const Suggestions = () => {
                   className="flex items-center space-x-4 p-2 hover:bg-gray-100 transition-all duration-200 ease-out cursor-pointer"
                   onClick={() => router.push(`${user.username}`)}
                 >
-                  <img
+                  <Image
                     src={user.photoURL}
-                    alt=""
-                    className="w-12 h-12 object-cover rounded-full border p-1 cursor-pointer"
+                    width={48}
+                    height={48}
+                    objectFit="cover"
+                    className="rounded-full"
                   />
+
                   <div className="flex flex-col items-start flex-1">
                     <h4 className="font-bold cursor-pointer">
                       {user.username}

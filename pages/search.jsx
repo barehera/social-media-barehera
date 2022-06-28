@@ -3,6 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const Search = () => {
   const [users, setUsers] = useState([]);
@@ -73,11 +74,14 @@ const Search = () => {
                   className="flex items-center gap-x-2 p-2 cursor-pointer hover:bg-gray-100 transition-all ease-out"
                   onClick={() => router.push(`/${user.username}`)}
                 >
-                  <img
+                  <Image
                     src={user.photoURL}
-                    alt=""
-                    className="w-10 h-10 rounded-full object-cover"
+                    width={40}
+                    height={40}
+                    objectFit="cover"
+                    className="rounded-full"
                   />
+
                   <p>{user.username}</p>
                 </div>
               ))}

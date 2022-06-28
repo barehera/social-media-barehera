@@ -13,6 +13,7 @@ import { db } from "../../../../firebase";
 import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../../../context/AuthContext";
+import Image from "next/image";
 
 const UserMessageCard = ({ messageUser }) => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
@@ -99,11 +100,14 @@ const UserMessageCard = ({ messageUser }) => {
         </div>
       ) : (
         <>
-          <img
+          <Image
             src={messageUser.photoURL}
-            alt=""
-            className="w-14 h-14 rounded-full object-cover"
+            width={56}
+            height={56}
+            className="rounded-full"
+            objectFit="cover"
           />
+
           <div className="ml-4 flex-1">
             <h4 className="text-sm font-semibold">{messageUser.username}</h4>
             {messages && (

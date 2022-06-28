@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { modalState } from "../atoms/modalAtom";
@@ -89,6 +88,7 @@ const Header = () => {
               placeholder="Search"
               type="text"
               onChange={inputHandler}
+              value={inputText}
             />
           </div>
           {searchOpen && (
@@ -97,13 +97,20 @@ const Header = () => {
                 <div
                   key={user.id}
                   className="flex items-center gap-x-2 p-2 cursor-pointer hover:bg-gray-100 transition-all ease-out"
-                  onClick={() => router.push(`/${user.username}`)}
+                  onClick={() => {
+                    setSearchOpen(false);
+                    setInputText("");
+                    router.push(`/${user.username}`);
+                  }}
                 >
-                  <img
+                  <Image
                     src={user.photoURL}
-                    alt=""
-                    className="w-10 h-10 rounded-full object-cover"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                    objectFit="cover"
                   />
+
                   <p>{user.username}</p>
                 </div>
               ))}
@@ -142,13 +149,17 @@ const Header = () => {
                 className="navButton"
                 onClick={logout}
               ></AiOutlineLogout>
-
-              <img
-                onClick={() => router.push(`/${user.username}`)}
-                src={user.photoURL}
-                alt=""
-                className="h-10 w-10 object-cover rounded-full cursor-pointer"
-              />
+              <div>
+                <Image
+                  src={user.photoURL}
+                  onClick={() => router.push(`/${user.username}`)}
+                  width={48}
+                  height={48}
+                  className="rounded-full cursor-pointer"
+                  objectFit="cover"
+                  quality={100}
+                />
+              </div>
             </>
           ) : (
             <button onClick={() => router.push("/login")}>Login</button>

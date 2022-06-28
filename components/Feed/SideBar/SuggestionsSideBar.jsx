@@ -12,6 +12,7 @@ import {
 import { db } from "../../../firebase";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../context/AuthContext";
+import Image from "next/image";
 
 const SuggestionsSideBar = () => {
   const [allUsers, setAllUsers] = useState([]);
@@ -101,12 +102,16 @@ const SuggestionsSideBar = () => {
             <div className="flex flex-col gap-y-4">
               {filteredUser.slice(0, 5).map((user) => (
                 <div key={user.id} className="flex items-center space-x-4">
-                  <img
-                    src={user.photoURL}
-                    alt=""
-                    className="w-12 h-12 object-cover rounded-full border p-1 cursor-pointer"
-                    onClick={() => router.push(`${user.username}`)}
-                  />
+                  <div className="border rounded-full cursor-pointer p-1 flex items-center justify-center">
+                    <Image
+                      src={user.photoURL}
+                      width={48}
+                      height={48}
+                      className="rounded-full"
+                      objectFit="cover"
+                    />
+                  </div>
+
                   <div className="flex flex-col items-start flex-1">
                     <h4
                       onClick={() => router.push(`${user.username}`)}

@@ -27,6 +27,7 @@ import { db, storage } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
 import { useAuth } from "../../context/AuthContext";
 import Comment from "./Comment";
+import Image from "next/image";
 
 const NewProfilePostModal = () => {
   const cancelButtonRef = useRef(null);
@@ -241,23 +242,30 @@ const NewProfilePostModal = () => {
               <Dialog.Panel className="relative  !max-w-5xl mx-4 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
                 <div className="bg-white rounded-lg overflow-y-scroll scrollbar-none w-full h-full flex flex-col lg:flex-row ">
                   {/*Left side */}
-                  <div className="flex h-96 w-full lg:h-full lg:w-3/5 items-start justify-start bg-black">
-                    <img
-                      src={post.image}
-                      alt=""
-                      className="h-full w-full object-contain"
-                    />
+                  <div className="relative flex h-96 w-full lg:h-full lg:w-3/5 items-start justify-start bg-black">
+                    {post.image && (
+                      <Image
+                        src={post.image}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    )}
                   </div>
                   {/*Right side */}
                   <div className="w-full h-full lg:w-2/5 relative flex flex-col">
                     {/*user image and username */}
                     <div className="flex p-4 justify-between items-center lg:border-none">
                       <div className="flex items-center space-x-4 ">
-                        <img
-                          src={userInfo.photoURL}
-                          alt=""
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
+                        {userInfo.photoURL && (
+                          <Image
+                            src={userInfo.photoURL}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                            objectFit="cover"
+                          />
+                        )}
+
                         <p className="text-sm font-semibold">
                           {userInfo.username}
                         </p>

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   BookmarkIcon,
   ChatIcon,
   DotsHorizontalIcon,
   HeartIcon,
-  PaperAirplaneIcon,
 } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import {
@@ -12,7 +11,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -21,10 +19,11 @@ import {
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "../../../../firebase";
-import Moment from "react-moment";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../context/AuthContext";
 import Comment from "./Comment";
+import Image from "next/image";
+import { FaSpinner } from "react-icons/fa";
 
 const Post = ({ userId, postId, img, caption, time }) => {
   const { user } = useAuth();
@@ -36,7 +35,12 @@ const Post = ({ userId, postId, img, caption, time }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
+  const ref = useRef(null);
   const date = new Date(time?.seconds * 1000);
+
+  const handleMessageIconClick = () => {
+    ref.current.focus();
+  };
 
   //Getting post owners username and profile photo
   useEffect(() => {
@@ -127,14 +131,24 @@ const Post = ({ userId, postId, img, caption, time }) => {
   return (
     <div className="bg-white my-7 border rounded-sm ">
       {/*Header */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between px-4 py-2 ">
         <div className="flex-1 flex items-center">
-          <img
-            src={userInfo.photoURL}
-            alt=""
-            className="w-12 h-12 object-cover rounded-full border p-1 mr-3 cursor-pointer"
-            onClick={() => router.push(`${userInfo.username}`)}
-          />
+          {userInfo.photoURL ? (
+            <div className="relative w-12 h-12 mr-3">
+              <Image
+                src={userInfo?.photoURL}
+                layout="fill"
+                className="rounded-full"
+                objectFit="cover"
+                priority
+              />
+            </div>
+          ) : (
+            <div className=" w-12 h-12 mr-3 flex items-center justify-center">
+              <FaSpinner className="animate-spin"></FaSpinner>
+            </div>
+          )}
+
           <p
             className="font-bold cursor-pointer"
             onClick={() => router.push(`${userInfo.username}`)}
@@ -163,8 +177,16 @@ const Post = ({ userId, postId, img, caption, time }) => {
         )}
       </div>
       {/*İmage */}
-
-      <img src={img} alt="Post image" className="object-cover w-full" />
+      <div className="border-y">
+        <Image
+          src={img}
+          layout="responsive"
+          width={100}
+          objectFit="contain"
+          height={150}
+          priority
+        ></Image>
+      </div>
 
       {/*Buttons */}
       {user && (
@@ -178,11 +200,11 @@ const Post = ({ userId, postId, img, caption, time }) => {
             ) : (
               <HeartIcon onClick={likePost} className="postButton "></HeartIcon>
             )}
-
-            <ChatIcon className="postButton"></ChatIcon>
-            <PaperAirplaneIcon className="postButton rotate-45"></PaperAirplaneIcon>
+            <ChatIcon
+              onClick={handleMessageIconClick}
+              className="postButton"
+            ></ChatIcon>
           </div>
-          <BookmarkIcon className="postButton"></BookmarkIcon>
         </div>
       )}
 
@@ -227,6 +249,7 @@ const Post = ({ userId, postId, img, caption, time }) => {
             onChange={(e) => setComment(e.target.value)}
             placeholder="Add a comment..."
             className="border-none flex-1 focus:ring-0 outline-none"
+            ref={ref}
           />
           <button
             type="submit"
