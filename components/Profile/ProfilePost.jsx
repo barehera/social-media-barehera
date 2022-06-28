@@ -66,9 +66,14 @@ const ProfilePost = ({ post, userId, postId }) => {
   }, [db, userId, postId]);
 
   return (
-    <div className="relative h-96 w-96">
+    <div className="relative">
       {post.data().image && (
-        <Image src={post.data().image} layout="fill" objectFit="cover" />
+        <Image
+          src={post.data().image}
+          width={400}
+          height={400}
+          objectFit="cover"
+        />
       )}
       <div
         className="absolute top-0 w-full h-full bg-black bg-opacity-0 z-10 hover:bg-opacity-30 transition-all ease-out cursor-pointer"
