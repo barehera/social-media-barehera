@@ -13,14 +13,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../../../firebase";
 import Moment from "react-moment";
-import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
 
 const DirectRightSide = () => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-
   const { user } = useAuth();
   const router = useRouter();
   const messagesEndRef = useRef(null);
@@ -32,7 +30,7 @@ const DirectRightSide = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+  //Getting messages
   useEffect(() => {
     setMessages([]);
     if (user && selectedUser) {
@@ -79,7 +77,7 @@ const DirectRightSide = () => {
         ),
         {
           message: inputMessage,
-          owner: user.username,
+          owner: user.uid,
           read: false,
           timestamp: serverTimestamp(),
         }
@@ -95,7 +93,7 @@ const DirectRightSide = () => {
         ),
         {
           message: inputMessage,
-          owner: user.username,
+          owner: user.uid,
           read: false,
           timestamp: serverTimestamp(),
         }
@@ -146,12 +144,10 @@ const DirectRightSide = () => {
                 <div
                   key={message.id}
                   className={`flex items-center relative   ${
-                    message.owner === user.username
-                      ? "justify-end"
-                      : "justify-start"
+                    message.owner === user.uid ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {message.owner !== user.username ? (
+                  {message.owner !== user.uid ? (
                     <div className="flex items-baseline gap-x-2 mb-5 ">
                       <img
                         src={selectedUser.photoURL}

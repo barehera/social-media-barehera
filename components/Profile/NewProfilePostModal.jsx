@@ -322,7 +322,7 @@ const NewProfilePostModal = () => {
                       <FiSend size={24} className="postButton"></FiSend>
                     </div>
                     {/*Caption */}
-                    <div className="px-4 flex flex-col">
+                    <div className="px-4 flex flex-col py-1">
                       <span>
                         <b>{post.username}</b> {post.caption}
                       </span>

@@ -26,7 +26,16 @@ import Moment from "react-moment";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../context/AuthContext";
 
-const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
+const Post = ({
+  userId,
+  postId,
+  username,
+  userImg,
+  img,
+  caption,
+  time,
+  userRef,
+}) => {
   const { user } = useAuth();
   const router = useRouter();
   const [comment, setComment] = useState("");
@@ -203,11 +212,6 @@ const Post = ({ userId, postId, username, userImg, img, caption, time }) => {
         <div className="ml-10 max-h-40 overflow-y-scroll scrollbar-thumb-black scrollbar-thin mb-4">
           {comments.map((comment) => (
             <div key={comment.id} className="flex items-start space-x-2 mb-3">
-              <img
-                src={comment.data().userImage}
-                alt=""
-                className="h-7 w-7 rounded-full"
-              />
               <div className="text-sm flex-1 flex items-baseline  space-x-2">
                 <h6>
                   <b>{comment.data().username}</b> {comment.data().comment}

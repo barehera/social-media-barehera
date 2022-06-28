@@ -55,7 +55,7 @@ const UserMessageCard = ({ messageUser }) => {
     const checkRead = () => {
       const count = 0;
       messages.map((message) => {
-        if (message.read === false && user.username !== message.owner) {
+        if (message.read === false && user.uid !== message.owner) {
           count += 1;
         }
       });
@@ -66,7 +66,7 @@ const UserMessageCard = ({ messageUser }) => {
 
   const readMessage = () => {
     messages.map(async (message) => {
-      if (message.owner !== user.username && message.read === false) {
+      if (message.owner !== user.uid && message.read === false) {
         const MessageRef = doc(
           db,
           "users",

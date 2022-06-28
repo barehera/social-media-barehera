@@ -109,6 +109,7 @@ const Posts = () => {
                   img={post.image}
                   caption={post.caption}
                   time={post.timestamp}
+                  userRef={post.userRef}
                 ></Post>
               ))}
             </>

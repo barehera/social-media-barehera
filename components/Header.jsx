@@ -88,6 +88,7 @@ const Header = () => {
               className="w-80 placeholder:text-slate-500 block bg-gray-100  border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-black sm:text-sm "
               placeholder="Search"
               type="text"
+              value={inputText}
               onChange={inputHandler}
             />
           </div>
@@ -97,7 +98,11 @@ const Header = () => {
                 <div
                   key={user.id}
                   className="flex items-center gap-x-2 p-2 cursor-pointer hover:bg-gray-100 transition-all ease-out"
-                  onClick={() => router.push(`/${user.username}`)}
+                  onClick={() => {
+                    setInputText("");
+                    setSearchOpen(false);
+                    router.push(`/${user.username}`);
+                  }}
                 >
                   <img
                     src={user.photoURL}
