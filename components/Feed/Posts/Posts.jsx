@@ -16,63 +16,58 @@ import { useAuth } from "../../../context/AuthContext";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [sortedPosts, setSortedPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
 
   //Getting Followed People -- session user
   useEffect(() => {
     if (user) {
-      const getPosts = async () => {
-        setLoading(true);
+      const unsubscribeFollowedUsers = onSnapshot(
+        query(
+          collection(db, "users", user.uid, "follows"),
+          where("username", "!=", null)
+        ),
+        (followedUsers) => {
+          followedUsers.docs.map(async (user) => {
+            setLoading(true);
+            const unsubscribeFollowedUserPosts = onSnapshot(
+              query(
+                collection(db, "users", user.id, "posts"),
+                orderBy("timestamp", "desc")
+              ),
+              (snapshot) => {
+                snapshot.docs.map((doc) => {
+                  setPosts((posts) => [
+                    ...posts,
+                    { ...doc.data(), id: doc.id },
+                  ]);
+                });
+                setLoading(false);
+              }
+            );
 
-        const unsubscribeFollowedUsers = onSnapshot(
-          query(
-            collection(db, "users", user.uid, "follows"),
-            where("username", "!=", null)
-          ),
-          (followedUsers) => {
-            followedUsers.docs.map(async (user) => {
-              const unsubscribeFollowedUserPosts = onSnapshot(
-                query(
-                  collection(db, "users", user.id, "posts"),
-                  orderBy("timestamp", "desc")
-                ),
-                (snapshot) => {
-                  snapshot.docs.map((doc) => {
-                    setPosts((posts) => [
-                      ...posts,
-                      { ...doc.data(), id: doc.id },
-                    ]);
-                  });
+            return unsubscribeFollowedUserPosts;
+          });
+        }
+      );
 
-                  setLoading(false);
-                }
-              );
+      const unsubscribeSessionUserPosts = onSnapshot(
+        query(
+          collection(db, "users", user.uid, "posts"),
+          orderBy("timestamp", "desc")
+        ),
 
-              return unsubscribeFollowedUserPosts;
-            });
-          }
-        );
+        (snapshot) => {
+          snapshot.docs.map((doc) => {
+            let newPost = { ...doc.data(), id: doc.id };
+            setPosts((posts) => [...posts, newPost]);
+          });
+        }
+      );
 
-        const unsubscribeSessionUserPosts = onSnapshot(
-          query(
-            collection(db, "users", user.uid, "posts"),
-            orderBy("timestamp", "desc")
-          ),
-          (snapshot) => {
-            snapshot.docs.map((doc) => {
-              let newPost = { ...doc.data(), id: doc.id };
-              setPosts((posts) => [...posts, newPost]);
-            });
-            setLoading(false);
-          }
-        );
-        return unsubscribeFollowedUsers, unsubscribeSessionUserPosts;
-      };
-
-      getPosts();
+      return unsubscribeFollowedUsers, unsubscribeSessionUserPosts;
     }
   }, [db, user]);
 
@@ -92,31 +87,41 @@ const Posts = () => {
   return (
     <div>
       <div className="my-8">
-        {sortedPosts.length > 0 ? (
+        {!loading ? (
           <>
-            {sortedPosts?.map((post) => (
-              <Post
-                key={post.id}
-                postId={post.id}
-                userId={post.userId}
-                img={post.image}
-                caption={post.caption}
-                time={post.timestamp}
-              ></Post>
-            ))}
+            {!isEmpty ? (
+              <>
+                {sortedPosts?.map((post) => (
+                  <Post
+                    key={post.id}
+                    postId={post.id}
+                    userId={post.userId}
+                    img={post.image}
+                    caption={post.caption}
+                    time={post.timestamp}
+                  ></Post>
+                ))}
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col items-center justify-center text-center">
+                  <h1 className="text-lg font-bold ">NO POSTS</h1>
+                  <p className="text-sm  text-gray-500">
+                    You can find new friends and follow them to see their posts
+                  </p>
+                  <button
+                    className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
+                    onClick={() => router.push("/suggestions")}
+                  >
+                    Go Suggestions
+                  </button>
+                </div>
+              </>
+            )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-lg font-bold ">NO POSTS</h1>
-            <p className="text-sm  text-gray-500">
-              You can find new friends and follow them to see their posts
-            </p>
-            <button
-              className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
-              onClick={() => router.push("/suggestions")}
-            >
-              Go Suggestions
-            </button>
+          <div className="w-full h-24 justify-center items-center flex">
+            <FaSpinner className="animate-spin" size={24}></FaSpinner>
           </div>
         )}
       </div>
