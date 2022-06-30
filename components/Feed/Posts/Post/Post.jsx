@@ -180,13 +180,11 @@ const Post = ({ userId, postId, img, caption, time }) => {
       <div className="border-y">
         <Image
           src={img}
-          placeholder="blur"
-          blurDataURL={img}
           layout="responsive"
           width={100}
           objectFit="contain"
           height={150}
-          loading="lazy"
+          priority
         ></Image>
       </div>
 
