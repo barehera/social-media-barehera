@@ -134,15 +134,15 @@ const Post = ({ userId, postId, img, caption, time }) => {
       <div className="flex items-center justify-between px-4 py-2 ">
         <div className="flex-1 flex items-center">
           {userInfo.photoURL ? (
-            <div className="relative w-12 h-12 mr-3">
+            <>
               <Image
                 src={userInfo?.photoURL}
-                layout="fill"
+                width={50}
+                height={50}
                 className="rounded-full"
                 objectFit="cover"
-                priority
               />
-            </div>
+            </>
           ) : (
             <div className=" w-12 h-12 mr-3 flex items-center justify-center">
               <FaSpinner className="animate-spin"></FaSpinner>
@@ -150,7 +150,7 @@ const Post = ({ userId, postId, img, caption, time }) => {
           )}
 
           <p
-            className="font-bold cursor-pointer"
+            className="font-bold cursor-pointer ml-3"
             onClick={() => router.push(`${userInfo.username}`)}
           >
             {userInfo.username}
@@ -180,11 +180,13 @@ const Post = ({ userId, postId, img, caption, time }) => {
       <div className="border-y">
         <Image
           src={img}
+          placeholder="blur"
+          blurDataURL={img}
           layout="responsive"
           width={100}
           objectFit="contain"
           height={150}
-          priority
+          loading="lazy"
         ></Image>
       </div>
 
