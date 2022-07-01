@@ -19,6 +19,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   {
     /*Listener for user logged in or logged out */
@@ -88,6 +89,7 @@ export const AuthContextProvider = ({ children }) => {
   const logout = async () => {
     setUser(null);
     await signOut(auth);
+    router.reload(window.location.pathname);
   };
   {
     /*Login function for google provider
