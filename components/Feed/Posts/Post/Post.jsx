@@ -181,9 +181,9 @@ const Post = ({ userId, postId, img, caption, time }) => {
         <Image
           src={img}
           layout="responsive"
-          width={100}
+          width={200}
           objectFit="contain"
-          height={150}
+          height={200}
           priority
         ></Image>
       </div>

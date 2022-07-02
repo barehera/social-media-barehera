@@ -42,7 +42,7 @@ const Comment = ({ comment }) => {
           className="pr-5 text-xs text-gray-500 hidden sm:block"
           fromNow
         >
-          {comment.timestamp?.toDate()}
+          {comment.data().timestamp?.toDate()}
         </Moment>
       </div>
     </>

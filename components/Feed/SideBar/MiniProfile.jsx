@@ -6,7 +6,7 @@ const MiniProfile = () => {
   const { user, logout } = useAuth();
   return (
     <div className="flex items-center space-x-4 ">
-      <div className="border p-[2px] rounded-full">
+      <div className="border p-[2px] rounded-full flex items-center justify-center">
         <Image
           src={user.photoURL}
           width={64}
