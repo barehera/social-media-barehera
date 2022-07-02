@@ -113,58 +113,6 @@ const Signup = () => {
               </button>
             </div>
           </div>
-          <div className="w-full h-screen flex  items-center justify-center bg-gray-100">
-            <div className="bg-white rounded shadow p-10 flex flex-col items-center">
-              <h1 className="text-3xl font-semibold mb-10">Sign Up</h1>
-              <form className="flex flex-col gap-y-3">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm text-black">Email Adress</p>
-                  <input
-                    required
-                    value={data.email}
-                    type="text"
-                    onChange={(e) =>
-                      setData({ ...data, email: e.target.value })
-                    }
-                    placeholder="e-mail"
-                    className="border rounded p-2"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm text-black">Password</p>
-                  <input
-                    required
-                    value={data.password}
-                    type="password"
-                    onChange={(e) =>
-                      setData({ ...data, password: e.target.value })
-                    }
-                    placeholder="password"
-                    className="border rounded p-2"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm text-black">Username</p>
-                  <input
-                    required
-                    value={data.username}
-                    type="text"
-                    onChange={(e) =>
-                      setData({ ...data, username: e.target.value })
-                    }
-                    placeholder="username"
-                    className="border rounded p-2"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white p-2 rounded hover:opacity-80 transition-all cursor-pointer"
-                >
-                  Sign up
-                </button>
-              </form>
-            </div>
-          </div>
         </>
       )}
     </>
