@@ -95,10 +95,10 @@ const Edit = () => {
   };
 
   return (
-    <div className="bg-gray-100 relative w-full h-[calc(100vh_-_57px)] flex items-center justify-center">
-      <div className="h-[calc(100%_-_3rem)] max-w-5xl w-full border border-gray-200 rounded-md bg-white flex  justify-center md:p-10 p-4">
+    <div className="bg-gray-100 relative w-full h-[calc(100vh_-_63px)] flex items-center justify-center ">
+      <div className="h-[90%] max-w-5xl w-full border border-gray-200 rounded-md bg-white flex  justify-center  overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
         <form
-          className="flex flex-col gap-y-5 justify-start items-start "
+          className="flex flex-col gap-y-2 h-[45rem] p-6 justify-center items-start "
           onSubmit={handleEdit}
         >
           {/*User Photo and username */}
@@ -199,7 +199,7 @@ const Edit = () => {
 
           <button
             type="submit"
-            className="bg-blue-500 p-2 rounded text-white cursor-pointer hover:opacity-90 transition-all ease-out w-32 md:w-full "
+            className="bg-blue-500 p-2  rounded text-white cursor-pointer hover:opacity-90 transition-all ease-out w-32 md:w-full "
           >
             Send
           </button>
