@@ -184,7 +184,7 @@ const Post = ({ userId, postId, img, caption, time }) => {
           width={200}
           objectFit="contain"
           height={200}
-          priority
+          loading="lazy"
         ></Image>
       </div>
 

@@ -73,6 +73,7 @@ const ProfilePost = ({ post, userId, postId }) => {
           width={400}
           height={400}
           objectFit="cover"
+          loading="lazy"
         />
       )}
       <div
