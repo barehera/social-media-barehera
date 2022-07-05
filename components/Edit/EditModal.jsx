@@ -11,9 +11,16 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadString,
+} from "firebase/storage";
 import Router from "next/router";
 import { useAuth } from "../../context/AuthContext";
+
+import imageCompression from "browser-image-compression";
 
 const EditModal = () => {
   const { user } = useAuth();
@@ -22,6 +29,7 @@ const EditModal = () => {
   const captionRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedPostFile, setSelectedPostFile] = useState(null);
 
   const uploadPost = async () => {
     if (loading) return;
@@ -29,18 +37,28 @@ const EditModal = () => {
 
     const imageRef = ref(storage, `${user.username}/photoURL/image`);
 
-    await uploadString(imageRef, selectedFile, "data_url").then(
-      async (snapshot) => {
+    const options = {
+      maxSizeMB: 0.5,
+      useWebWorker: true,
+    };
+    try {
+      const compressedBlob = await imageCompression(selectedFile, options);
+
+      await uploadBytes(imageRef, compressedBlob, "").then(async (snapshot) => {
         const downloadURL = await getDownloadURL(imageRef);
+
         await updateDoc(doc(db, "users", user.uid), {
           photoURL: downloadURL,
         });
-      }
-    );
-    setOpen(false);
-    setLoading(false);
-    setSelectedFile(null);
-    Router.reload(window.location.pathname);
+      });
+
+      setOpen(false);
+      setLoading(false);
+      setSelectedFile(null);
+      Router.reload(window.location.pathname);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const addImageToPost = (e) => {
@@ -48,9 +66,11 @@ const EditModal = () => {
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
     }
+
     reader.onload = (readerEvent) => {
-      setSelectedFile(readerEvent.target.result);
+      setSelectedPostFile(readerEvent.target.result);
     };
+    setSelectedFile(e.target.files[0]);
   };
 
   return (
@@ -91,10 +111,13 @@ const EditModal = () => {
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               <div>
-                {selectedFile ? (
+                {selectedPostFile ? (
                   <img
-                    src={selectedFile}
-                    onClick={() => setSelectedFile(null)}
+                    src={selectedPostFile}
+                    onClick={() => {
+                      setSelectedPostFile(null);
+                      setSelectedFile(null);
+                    }}
                     alt="image upload"
                     className="w-full object-contain cursor-pointer"
                   ></img>

@@ -32,7 +32,6 @@ const Post = ({ userId, postId, img, caption, time }) => {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
   const ref = useRef(null);
@@ -114,20 +113,6 @@ const Post = ({ userId, postId, img, caption, time }) => {
     });
   };
 
-  //Deleting Post Function
-
-  const deletePost = async (userId, postId) => {
-    if (user?.uid === userId) {
-      await deleteDoc(doc(db, "users", userId, "posts", postId));
-      const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
-      deleteObject(imageRef)
-        .then(router.reload(window.location.pathname))
-        .catch((err) => alert(err));
-    } else {
-      alert("You are not user!!!!");
-    }
-  };
-
   return (
     <div className="bg-white my-7 border rounded-sm ">
       {/*Header */}
@@ -156,25 +141,6 @@ const Post = ({ userId, postId, img, caption, time }) => {
             {userInfo.username}
           </p>
         </div>
-
-        {user?.uid === userId && (
-          <div className="relative flex items-center">
-            {deleteModalOpen && (
-              <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
-                <button
-                  className="truncate text-blue-400 text-sm"
-                  onClick={() => deletePost(userId, postId)}
-                >
-                  Delete Post
-                </button>
-              </div>
-            )}
-            <DotsHorizontalIcon
-              className="h-5 cursor-pointer"
-              onClick={() => setDeleteModalOpen(!deleteModalOpen)}
-            ></DotsHorizontalIcon>
-          </div>
-        )}
       </div>
       {/*İmage */}
       <div className="border-y">

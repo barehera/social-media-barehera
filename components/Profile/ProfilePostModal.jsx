@@ -41,7 +41,6 @@ const NewProfilePostModal = () => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const { user } = useAuth();
 
@@ -185,20 +184,6 @@ const NewProfilePostModal = () => {
     }
   };
 
-  //Deleting Post Function
-
-  const deletePost = async (userId, postId) => {
-    if (user?.uid === userId) {
-      await deleteDoc(doc(db, "users", userId, "posts", postId));
-      const imageRef = ref(storage, `${user.username}/posts/${postId}/image`);
-      deleteObject(imageRef)
-        .then(router.reload(window.location.pathname))
-        .catch((err) => alert(err));
-    } else {
-      alert("You are not user!!!!");
-    }
-  };
-
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -268,26 +253,6 @@ const NewProfilePostModal = () => {
                           {userInfo.username}
                         </p>
                       </div>
-                      {user?.uid === userPost.userId && (
-                        <div className="relative flex items-center">
-                          {deleteModalOpen && (
-                            <div className="absolute  right-6 p-2 bg-white shadow-md rounded">
-                              <button
-                                className="truncate text-blue-400 text-sm"
-                                onClick={() =>
-                                  deletePost(userPost.userId, userPost.postId)
-                                }
-                              >
-                                Delete Post
-                              </button>
-                            </div>
-                          )}
-                          <TbDots
-                            className="h-5 cursor-pointer"
-                            onClick={() => setDeleteModalOpen(!deleteModalOpen)}
-                          ></TbDots>
-                        </div>
-                      )}
                     </div>
                     {/*Comments */}
                     <div className="py-5  border-y border-gray-300 lg:h-72">

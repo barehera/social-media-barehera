@@ -47,8 +47,7 @@ const Modal = () => {
     const imageRef = ref(storage, `${user.username}/posts/${docRef.id}/image`);
 
     const options = {
-      maxSizeMB: 0.2,
-      maxWidthOrHeight: 1920,
+      maxSizeMB: 0.5,
       useWebWorker: true,
     };
     try {
@@ -121,7 +120,7 @@ const Modal = () => {
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               <div>
-                {selectedFile ? (
+                {selectedPostFile ? (
                   <img
                     src={selectedPostFile}
                     onClick={() => {
