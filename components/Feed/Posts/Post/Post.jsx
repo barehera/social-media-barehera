@@ -178,14 +178,16 @@ const Post = ({ userId, postId, img, caption, time }) => {
       </div>
       {/*İmage */}
       <div className="border-y">
-        <Image
-          src={img}
-          layout="responsive"
-          width={200}
-          objectFit="contain"
-          height={200}
-          loading="lazy"
-        ></Image>
+        {img && (
+          <Image
+            src={img}
+            layout="responsive"
+            width={200}
+            objectFit="contain"
+            height={200}
+            loading="lazy"
+          ></Image>
+        )}
       </div>
 
       {/*Buttons */}

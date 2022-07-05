@@ -16,7 +16,7 @@ import {
 import { db } from "../firebase";
 import { FaSpinner } from "react-icons/fa";
 import ProfilePost from "../components/Profile/ProfilePost";
-import NewProfilePostModal from "../components/Profile/NewProfilePostModal";
+import ProfilePostModal from "../components/Profile/ProfilePostModal";
 import { useAuth } from "../context/AuthContext";
 import FollowFollowerUser from "../components/Profile/FollowFollowerUser/FollowFollowerUser";
 import Image from "next/image";
@@ -424,7 +424,7 @@ const Profile = () => {
                 </div>
               </div>
               <Modal></Modal>
-              <NewProfilePostModal></NewProfilePostModal>
+              <ProfilePostModal></ProfilePostModal>
             </div>
           )}
         </>

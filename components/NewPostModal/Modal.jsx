@@ -11,9 +11,15 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadString,
+} from "firebase/storage";
 import Router from "next/router";
 import { useAuth } from "../../context/AuthContext";
+import imageCompression from "browser-image-compression";
 
 const Modal = () => {
   const { user } = useAuth();
@@ -22,17 +28,16 @@ const Modal = () => {
   const captionRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedPostFile, setSelectedPostFile] = useState(null);
 
   const uploadPost = async () => {
     if (loading) return;
-
-    setLoading(true);
 
     // 1-) create a post and aa to firestore 'posts' collection
     // 2-) get the post Id for the newly created post
     // 3-) Upload the image to firebase storage with the post ID
     // 4-) get a download URL from fb storage and update the original post with image
-
+    setLoading(true);
     const docRef = await addDoc(collection(db, "users", user.uid, "posts"), {
       caption: captionRef.current.value,
       timestamp: serverTimestamp(),
@@ -41,20 +46,29 @@ const Modal = () => {
 
     const imageRef = ref(storage, `${user.username}/posts/${docRef.id}/image`);
 
-    await uploadString(imageRef, selectedFile, "data_url").then(
-      async (snapshot) => {
+    const options = {
+      maxSizeMB: 0.2,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedBlob = await imageCompression(selectedFile, options);
+
+      await uploadBytes(imageRef, compressedBlob, "").then(async (snapshot) => {
         const downloadURL = await getDownloadURL(imageRef);
 
         await updateDoc(doc(db, "users", user.uid, "posts", docRef.id), {
           image: downloadURL,
         });
-      }
-    );
+      });
 
-    setOpen(false);
-    setLoading(false);
-    setSelectedFile(null);
-    Router.reload(window.location.pathname);
+      setOpen(false);
+      setLoading(false);
+      setSelectedFile(null);
+      Router.reload(window.location.pathname);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const addImageToPost = (e) => {
@@ -64,8 +78,9 @@ const Modal = () => {
     }
 
     reader.onload = (readerEvent) => {
-      setSelectedFile(readerEvent.target.result);
+      setSelectedPostFile(readerEvent.target.result);
     };
+    setSelectedFile(e.target.files[0]);
   };
 
   return (
@@ -108,8 +123,11 @@ const Modal = () => {
               <div>
                 {selectedFile ? (
                   <img
-                    src={selectedFile}
-                    onClick={() => setSelectedFile(null)}
+                    src={selectedPostFile}
+                    onClick={() => {
+                      setSelectedPostFile(null);
+                      setSelectedFile(null);
+                    }}
                     alt="image upload"
                     className="w-full object-contain cursor-pointer"
                   ></img>

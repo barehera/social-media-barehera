@@ -208,12 +208,10 @@ const NewProfilePostModal = () => {
         onClose={() => {
           setOpen(false);
           setUserPost({ postId: null, userId: null });
-          setTimeout(() => {
-            setPost([]);
-            setLikes([]);
-            setComment("");
-            setComments([]);
-          }, 200);
+          setPost([]);
+          setLikes([]);
+          setComment("");
+          setComments([]);
         }}
       >
         <Transition.Child
@@ -239,10 +237,10 @@ const NewProfilePostModal = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative  !max-w-5xl mx-4 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+              <Dialog.Panel className="relative w-full !max-w-5xl  bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg">
                 <div className="bg-white rounded-lg overflow-y-scroll scrollbar-none w-full h-full flex flex-col lg:flex-row ">
                   {/*Left side */}
-                  <div className="relative flex h-96 w-full lg:h-full lg:w-3/5 items-start justify-start bg-black">
+                  <div className="relative flex h-[50rem] w-full lg:h-full lg:w-3/5 items-start justify-start bg-black">
                     {post.image && (
                       <Image
                         src={post.image}
@@ -375,7 +373,14 @@ const NewProfilePostModal = () => {
               ref={cancelButtonRef}
             >
               <AiOutlineClose
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  setUserPost({ postId: null, userId: null });
+                  setPost([]);
+                  setLikes([]);
+                  setComment("");
+                  setComments([]);
+                }}
                 size={20}
               ></AiOutlineClose>
             </div>
