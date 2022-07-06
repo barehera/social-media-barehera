@@ -11,7 +11,13 @@ import {
   AiOutlineHome,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
-import { collection, query, getDocs, where } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../context/AuthContext";
 
@@ -22,6 +28,7 @@ const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useRecoilState(modalState);
   const [inputText, setInputText] = useState("");
+  const [unreadMessage, setUnreadMessage] = useState(0);
 
   const inputHandler = (e) => {
     //convert input text to lower case
@@ -52,6 +59,7 @@ const Header = () => {
     const getUsers = async () => {
       if (user) {
         setUsers([]);
+
         const q = query(
           collection(db, "users"),
           where("username", "!=", user.username)
@@ -60,10 +68,37 @@ const Header = () => {
         querySnapshot.forEach(async (doc) => {
           setUsers((users) => [...users, { ...doc.data(), id: doc.id }]);
         });
+        querySnapshot.forEach((messageUser) => {
+          const unsubscribe = onSnapshot(
+            query(
+              collection(
+                db,
+                "users",
+                user.uid,
+                "messages",
+                messageUser.id,
+                "messages"
+              ),
+              where("owner", "!=", user.uid)
+            ),
+            (messages) => {
+              if (!messages.empty) {
+                const count = 0;
+                messages.docs.map((message) => {
+                  if (!message.data().read) {
+                    count += 1;
+                  }
+                });
+                setUnreadMessage(count);
+              }
+            }
+          );
+          return unsubscribe;
+        });
       }
     };
     getUsers();
-  }, [user]);
+  }, [user, db]);
 
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-30">
@@ -134,11 +169,17 @@ const Header = () => {
                 className="navButton xl:hidden"
                 onClick={() => router.push(`/suggestions`)}
               ></AiOutlineUsergroupAdd>
-
-              <AiOutlineMessage
-                className="navButton"
+              <div
+                className="relative navButton"
                 onClick={() => router.push(`/direct`)}
-              ></AiOutlineMessage>
+              >
+                <AiOutlineMessage className="navButton"></AiOutlineMessage>
+                {unreadMessage > 0 && (
+                  <div className="absolute -top-1 animate-bounce -right-1 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center  text-white">
+                    {unreadMessage}
+                  </div>
+                )}
+              </div>
 
               <AiOutlinePlusCircle
                 onClick={() => setOpen(true)}

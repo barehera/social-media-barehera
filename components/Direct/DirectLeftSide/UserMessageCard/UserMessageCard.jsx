@@ -130,7 +130,7 @@ const UserMessageCard = ({ messageUser }) => {
           </div>
           <div>
             {unreadMessages > 0 && (
-              <p className="bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center text-white animate-pulse">
+              <p className="bg-teal-500 rounded-full w-6 h-6 flex items-center justify-center text-white animate-pulse">
                 {unreadMessages}
               </p>
             )}

@@ -16,8 +16,8 @@ import { useAuth } from "../../../context/AuthContext";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [sortedPosts, setSortedPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(true);
   const { user } = useAuth();
   const router = useRouter();
 
@@ -38,6 +38,7 @@ const Posts = () => {
                 orderBy("timestamp", "desc")
               ),
               (snapshot) => {
+                console.log(snapshot.empty);
                 snapshot.docs.map((doc) => {
                   setPosts((posts) => [
                     ...posts,
@@ -64,6 +65,7 @@ const Posts = () => {
             let newPost = { ...doc.data(), id: doc.id };
             setPosts((posts) => [...posts, newPost]);
           });
+          setLoading(false);
         }
       );
 
@@ -89,7 +91,7 @@ const Posts = () => {
       <div className="my-8">
         {!loading ? (
           <>
-            {!isEmpty ? (
+            {posts.length > 0 ? (
               <>
                 {sortedPosts?.map((post) => (
                   <Post
@@ -104,24 +106,20 @@ const Posts = () => {
               </>
             ) : (
               <>
-                <div className="flex flex-col items-center justify-center text-center">
-                  <h1 className="text-lg font-bold ">NO POSTS</h1>
-                  <p className="text-sm  text-gray-500">
-                    You can find new friends and follow them to see their posts
+                <div
+                  onClick={() => router.push("/suggestions")}
+                  className="flex cursor-pointer gap-x-1 items-center justify-center text-center"
+                >
+                  <p>
+                    Arkadaşlarını bulmak için <b>tıkla</b>
                   </p>
-                  <button
-                    className="px-5 py-1 mt-4 text-white text-sm   bg-blue-500 rounded"
-                    onClick={() => router.push("/suggestions")}
-                  >
-                    Go Suggestions
-                  </button>
                 </div>
               </>
             )}
           </>
         ) : (
           <div className="w-full h-24 justify-center items-center flex">
-            <FaSpinner className="animate-spin" size={24}></FaSpinner>
+            <FaSpinner className="animate-spin" size={30}></FaSpinner>
           </div>
         )}
       </div>
