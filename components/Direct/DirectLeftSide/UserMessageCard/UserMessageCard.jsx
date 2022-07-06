@@ -5,10 +5,15 @@ import {
   query,
   doc,
   updateDoc,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { messagesSelectedUser } from "../../../../atoms/messagesUsersAtom";
+import {
+  messagesSelectedUser,
+  unreadMessagesCount,
+} from "../../../../atoms/messagesUsersAtom";
 import { db } from "../../../../firebase";
 import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
@@ -21,6 +26,7 @@ const UserMessageCard = ({ messageUser }) => {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const [unreadMessage, setUnreadMessage] = useRecoilState(unreadMessagesCount);
   useEffect(() => {
     setMessages([]);
     setLoading(true);
@@ -82,6 +88,45 @@ const UserMessageCard = ({ messageUser }) => {
         });
       }
     });
+
+    const getUsers = async () => {
+      if (user) {
+        const q = query(
+          collection(db, "users"),
+          where("username", "!=", user.username)
+        );
+        const querySnapshot = await getDocs(q);
+
+        const count = 0;
+        querySnapshot.forEach((messageUser) => {
+          const unsubscribe = onSnapshot(
+            query(
+              collection(
+                db,
+                "users",
+                user.uid,
+                "messages",
+                messageUser.id,
+                "messages"
+              ),
+              where("owner", "!=", user.uid)
+            ),
+            (messages) => {
+              if (!messages.empty) {
+                messages.docs.map((message) => {
+                  if (!message.data().read) {
+                    count += 1;
+                  }
+                });
+                setUnreadMessage(count);
+              }
+            }
+          );
+          return unsubscribe;
+        });
+      }
+    };
+    getUsers();
   };
 
   return (

@@ -20,6 +20,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../context/AuthContext";
+import { unreadMessagesCount } from "../atoms/messagesUsersAtom";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -28,7 +29,7 @@ const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useRecoilState(modalState);
   const [inputText, setInputText] = useState("");
-  const [unreadMessage, setUnreadMessage] = useState(0);
+  const [unreadMessage, setUnreadMessage] = useRecoilState(unreadMessagesCount);
 
   const inputHandler = (e) => {
     //convert input text to lower case
@@ -68,6 +69,7 @@ const Header = () => {
         querySnapshot.forEach(async (doc) => {
           setUsers((users) => [...users, { ...doc.data(), id: doc.id }]);
         });
+        const count = 0;
         querySnapshot.forEach((messageUser) => {
           const unsubscribe = onSnapshot(
             query(
@@ -83,7 +85,6 @@ const Header = () => {
             ),
             (messages) => {
               if (!messages.empty) {
-                const count = 0;
                 messages.docs.map((message) => {
                   if (!message.data().read) {
                     count += 1;
