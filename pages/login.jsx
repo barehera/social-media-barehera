@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
-import { FcGoogle } from "react-icons/fc";
+import { FaSpinner } from "react-icons/fa";
 
 const Login = () => {
   const [data, setData] = useState({
@@ -9,6 +9,7 @@ const Login = () => {
     password: "",
   });
   const { user, login } = useAuth();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const Login = () => {
   }, [user]);
 
   const handleLogin = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       await login(data.email, data.password);
@@ -28,7 +30,7 @@ const Login = () => {
       email: "",
       password: "",
     });
-    router.push("/");
+    router.push("/").then(() => setLoading(false));
   };
 
   return (
@@ -63,10 +65,17 @@ const Login = () => {
                   className="outline-none border-gray-300 h-8 placeholder:text-gray-500 placeholder:text-sm rounded-sm bg-gray-50"
                 />
                 <button
+                  disabled={loading}
                   type="submit"
-                  className="bg-blue-500 text-white p-1 rounded hover:opacity-80 transition-all cursor-pointer"
+                  className="bg-blue-500 text-white h-10 rounded hover:opacity-80 transition-all cursor-pointer flex items-center justify-center disabled:bg-gray-500 disabled:cursor-not-allowed"
                 >
-                  Log in
+                  {loading ? (
+                    <div>
+                      <FaSpinner className="animate-spin"></FaSpinner>
+                    </div>
+                  ) : (
+                    "Log in"
+                  )}
                 </button>
               </form>
 
