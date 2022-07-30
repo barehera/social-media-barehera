@@ -20,6 +20,7 @@ import ProfilePostModal from "../components/Profile/ProfilePostModal";
 import { useAuth } from "../context/AuthContext";
 import FollowFollowerUser from "../components/Profile/FollowFollowerUser/FollowFollowerUser";
 import Image from "next/image";
+import SkeletonLoader from "../components/Profile/SkeletonLoader";
 
 const Profile = () => {
   //Router
@@ -155,8 +156,8 @@ const Profile = () => {
       {userExists ? (
         <>
           {loading ? (
-            <div className="w-full h-screen flex items-center justify-center">
-              <FaSpinner size={40} className="animate-spin"></FaSpinner>
+            <div className="md:max-w-5xl mx-auto flex flex-col">
+              <SkeletonLoader></SkeletonLoader>
             </div>
           ) : (
             <div className="relative">

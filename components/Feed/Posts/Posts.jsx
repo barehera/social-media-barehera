@@ -39,7 +39,6 @@ const Posts = () => {
                 orderBy("timestamp", "desc")
               ),
               (snapshot) => {
-                console.log(snapshot.empty);
                 snapshot.docs.map((doc) => {
                   setPosts((posts) => [
                     ...posts,

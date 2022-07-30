@@ -19,6 +19,7 @@ import Moment from "react-moment";
 import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../../../context/AuthContext";
 import Image from "next/image";
+import SkeletonLoader from "./SkeletonLoader";
 
 const UserMessageCard = ({ messageUser }) => {
   const [selectedUser, setSelectedUser] = useRecoilState(messagesSelectedUser);
@@ -140,9 +141,9 @@ const UserMessageCard = ({ messageUser }) => {
       }`}
     >
       {loading ? (
-        <div className="w-full h-14 px-4 py-2 flex items-center justify-center">
-          <FaSpinner className="animate-spin"></FaSpinner>
-        </div>
+        <>
+          <SkeletonLoader></SkeletonLoader>
+        </>
       ) : (
         <>
           <Image

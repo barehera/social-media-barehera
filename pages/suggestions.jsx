@@ -70,11 +70,34 @@ const Suggestions = () => {
       });
   }, [db, allUsers, sessionUserFollowsId]);
 
+  const SkeletonLoader = () => {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+        <div className="flex flex-col gap-2">
+          <div className="w-32 h-2 bg-gray-300 rounded-2xl"></div>
+          <div className="w-24 h-2 bg-gray-300 rounded-2xl"></div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       {loading ? (
-        <div className="w-full h-96 flex items-center justify-center">
-          <FaSpinner size={40} className="animate-spin"></FaSpinner>
+        <div className="max-w-5xl mx-auto">
+          <h4 className="pb-3 my-5 text-xl text-center border-b border-gray-300 font-semibold ">
+            Suggestions For You
+          </h4>
+          <div className="grid items-center justify-center md:grid-cols-2 lg:grid-cols-3 gap-3 animate px-4">
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+          </div>
         </div>
       ) : (
         <div className="max-w-5xl mx-auto">
