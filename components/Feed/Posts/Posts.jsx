@@ -12,6 +12,7 @@ import { FaSpinner } from "react-icons/fa";
 
 import { useRouter } from "next/router";
 import { useAuth } from "../../../context/AuthContext";
+import SkeletonLoader from "./SkeletonLoader";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -118,8 +119,10 @@ const Posts = () => {
             )}
           </>
         ) : (
-          <div className="w-full h-24 justify-center items-center flex">
-            <FaSpinner className="animate-spin" size={30}></FaSpinner>
+          <div className="flex flex-col gap-6">
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
           </div>
         )}
       </div>

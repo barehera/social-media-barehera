@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  BookmarkIcon,
-  ChatIcon,
-  DotsHorizontalIcon,
-  HeartIcon,
-} from "@heroicons/react/outline";
+import { ChatIcon, HeartIcon } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import {
   addDoc,
@@ -17,13 +12,11 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { ref, deleteObject } from "firebase/storage";
-import { db, storage } from "../../../../firebase";
+import { db } from "../../../../firebase";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../context/AuthContext";
 import Comment from "./Comment";
 import Image from "next/image";
-import { FaSpinner } from "react-icons/fa";
 
 const Post = ({ userId, postId, img, caption, time }) => {
   const { user } = useAuth();
@@ -122,16 +115,17 @@ const Post = ({ userId, postId, img, caption, time }) => {
             <>
               <Image
                 src={userInfo?.photoURL}
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 className="rounded-full"
                 objectFit="cover"
               />
             </>
           ) : (
-            <div className=" w-12 h-12 mr-3 flex items-center justify-center">
-              <FaSpinner className="animate-spin"></FaSpinner>
-            </div>
+            <>
+              <div className=" w-10 h-10 mr-3 bg-gray-300 animate-pulse rounded-full"></div>
+              <div className=" w-32 h-3 bg-gray-300 animate-pulse rounded-2xl"></div>
+            </>
           )}
 
           <p
@@ -144,15 +138,19 @@ const Post = ({ userId, postId, img, caption, time }) => {
       </div>
       {/*İmage */}
       <div className="border-y">
-        {img && (
+        {img ? (
           <Image
             src={img}
             layout="responsive"
-            width={200}
+            width="100%"
             objectFit="contain"
-            height={200}
+            height="100%"
             loading="lazy"
           ></Image>
+        ) : (
+          <>
+            <div className="w-full h-96 bg-gray-300 animate-pulse">HELLO</div>
+          </>
         )}
       </div>
 

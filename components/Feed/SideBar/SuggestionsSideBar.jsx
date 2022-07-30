@@ -13,6 +13,7 @@ import { db } from "../../../firebase";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../context/AuthContext";
 import Image from "next/image";
+import SkeletonLoader from "./SkeletonLoader";
 
 const SuggestionsSideBar = () => {
   const [allUsers, setAllUsers] = useState([]);
@@ -80,13 +81,20 @@ const SuggestionsSideBar = () => {
   };
 
   return (
-    <div>
+    <div className="mt-4">
       {loading ? (
-        <div className="w-full h-80 flex items-center justify-center">
-          <FaSpinner className="animate-spin" size={30}></FaSpinner>
-        </div>
+        <>
+          <div className="w-1/2 h-3 bg-gray-300 rounded-2xl mb-4 animate-pulse"></div>
+          <div className="flex flex-col gap-4">
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+            <SkeletonLoader></SkeletonLoader>
+          </div>
+        </>
       ) : (
-        <div className="mt-4 ">
+        <div>
           <div className="flex justify-between mb-4 items-center">
             <h4 className="text-gray-400">Suggestions for you</h4>
             {filteredUser.length > 5 && (
@@ -102,15 +110,13 @@ const SuggestionsSideBar = () => {
             <div className="flex flex-col gap-y-4">
               {filteredUser.slice(0, 5).map((user) => (
                 <div key={user.id} className="flex items-center space-x-4">
-                  <div className="border rounded-full cursor-pointer p-1 flex items-center justify-center">
-                    <Image
-                      src={user.photoURL}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                      objectFit="cover"
-                    />
-                  </div>
+                  <Image
+                    src={user.photoURL}
+                    width={48}
+                    height={48}
+                    className="rounded-full "
+                    objectFit="cover"
+                  />
 
                   <div className="flex flex-col items-start flex-1">
                     <h4
